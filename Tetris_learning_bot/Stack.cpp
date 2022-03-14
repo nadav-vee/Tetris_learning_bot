@@ -27,7 +27,7 @@ Stack::Stack()
 
 void Stack::Update()
 {
-	curpiece->Rotate();
+	//curpiece->Rotate();
 	sf::Vector2i curpos = curpiece->GetPiecePos();
 	curpiece->SetpiecePos(sf::Vector2i(curpos.x, curpos.y + 1));
 }
@@ -50,7 +50,7 @@ void Stack::Draw(sf::RenderWindow& window)
 Piece* NewPiece(ColorsType rp)
 {
 	Piece* tmpP = new Piece(rp);
-	tmpP->SetpiecePos(sf::Vector2i(8, 0));
+	tmpP->SetpiecePos(sf::Vector2i(6, 0));
 	return tmpP;
 }
 
@@ -118,7 +118,7 @@ Piece::Piece(enum ColorsType piecetype)
 		break;
 	case ColorsType::BLUE:
 		filet = Ipiece;
-		
+
 		piece[0][1]->val = true;	// the blue I piece
 		piece[0][1]->SetTex(filet); // 
 		piece[1][1]->val = true;	// 0 1 0 0
@@ -130,7 +130,7 @@ Piece::Piece(enum ColorsType piecetype)
 		break;
 	case ColorsType::GREEN:
 		filet = Spiece;
-		
+
 		smallpiece[0][1]->val = true;		// the green S piece
 		smallpiece[0][1]->SetTex(filet);	// 
 		smallpiece[0][2]->val = true;		// 
@@ -142,7 +142,7 @@ Piece::Piece(enum ColorsType piecetype)
 		break;
 	case ColorsType::ORANGE:
 		filet = Lpiece;
-		
+
 		smallpiece[0][1]->val = true;		// the orange L piece
 		smallpiece[0][1]->SetTex(filet);	// 
 		smallpiece[1][1]->val = true;		// 0 1 0
@@ -154,7 +154,7 @@ Piece::Piece(enum ColorsType piecetype)
 		break;
 	case ColorsType::PINK:
 		filet = Jpiece;
-		
+
 		smallpiece[0][1]->val = true;		// the pink J piece
 		smallpiece[0][1]->SetTex(filet);	// 
 		smallpiece[1][1]->val = true;		// 0 1 0
@@ -166,7 +166,7 @@ Piece::Piece(enum ColorsType piecetype)
 		break;
 	case ColorsType::PURPLE:
 		filet = Tpiece;
-		
+
 		smallpiece[0][1]->val = true;		// the purple T piece
 		smallpiece[0][1]->SetTex(filet);	// 
 		smallpiece[1][0]->val = true;		//
@@ -178,7 +178,7 @@ Piece::Piece(enum ColorsType piecetype)
 		break;
 	case ColorsType::RED:
 		filet = Zpiece;
-		
+
 		smallpiece[0][0]->val = true;		// the red Z piece
 		smallpiece[0][0]->SetTex(filet);	// 
 		smallpiece[0][1]->val = true;		//
@@ -190,7 +190,7 @@ Piece::Piece(enum ColorsType piecetype)
 		break;
 	case ColorsType::YELLOW:
 		filet = Opiece;
-		
+
 		piece[1][1]->val = true;	// the yellow O piece
 		piece[1][1]->SetTex(filet); // 
 		piece[1][2]->val = true;	// 0 0 0 0
@@ -211,14 +211,18 @@ Piece::~Piece()
 	{
 		for (int j = 0; j < PIECESIZE; j++)
 		{
-			delete piece[i][j];
+			if (piece[i][j])
+				delete piece[i][j];
+			piece[i][j] = NULL;
 		}
 	}
 	for (int i = 0; i < SMALLPIECESIZE; i++)
 	{
 		for (int j = 0; j < SMALLPIECESIZE; j++)
 		{
-			delete smallpiece[i][j];
+			if (smallpiece[i][j])
+				delete smallpiece[i][j];
+			smallpiece[i][j] = NULL;
 		}
 	}
 }
@@ -241,18 +245,17 @@ sf::Vector2i Piece::GetPiecePos()
 
 void Piece::RotWithoutOrigin()
 {
-	Cell* tmp = new Cell();
-	tmp = piece[0][0];
+	Cell* tmp = piece[0][0];
 	piece[0][0] = piece[3][0];
 	piece[3][0] = piece[3][3];
 	piece[3][3] = piece[0][3];
 	piece[0][3] = tmp;
 
+
 	tmp = piece[0][1];
 	piece[0][1] = piece[2][0];
 	piece[2][0] = piece[3][2];
 	piece[3][2] = piece[1][3];
-	piece[0][0] = piece[3][0];
 	piece[1][3] = tmp;
 
 	tmp = piece[0][2];
@@ -313,6 +316,13 @@ void Piece::Rotate()
 		break;
 	}
 }
+
+void Piece::Move(int dir)
+{
+	sf::Vector2i pos = StackIndPos;
+	SetpiecePos(sf::Vector2i(pos.x + dir, pos.y));
+}
+
 void Piece::Draw(sf::RenderWindow& window)
 {
 	UpdatepiecePos();
@@ -352,7 +362,7 @@ void Piece::UpdatepiecePos()
 			}
 		}
 	}
-	else 
+	else
 	{
 		for (int i = 0; i < SMALLPIECESIZE; i++)
 		{

@@ -75,12 +75,13 @@ public:
     sf::Vector2i GetPiecePos();
     void Draw(sf::RenderWindow& window);
     void Rotate();
+    void Move(int dir);
     void RotWithoutOrigin();
     void RotWithOrigin();
+    sf::Vector2i StackIndPos;
 
 private:
     //sf::Vector2i Origin;
-    sf::Vector2i StackIndPos;
     Cell* piece[PIECESIZE][PIECESIZE];
     Cell* smallpiece[SMALLPIECESIZE][SMALLPIECESIZE];
     void UpdatepiecePos();
@@ -106,10 +107,10 @@ public:
 
     void TemporaryChangepieceMethode();
     void GeneratepiecesQueue();
+    Piece* curpiece;
 
 private:
     Cell* board[STACKH][STACKW];
-    Piece* curpiece;
     std::queue<Piece*> Qpieces;
 };
 

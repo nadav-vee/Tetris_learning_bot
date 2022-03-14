@@ -21,17 +21,6 @@
 #define PLH				(SIZE*SCALE*PIECELIST*PIECESIZE)
 #define W				(BW+BUFF+PLW)
 #define H				(BH)
-
-
-//#define WHITEISH	0
-//#define GREY		1
-//#define BLUE		2
-//#define GREEN		3
-//#define ORANGE		4
-//#define PINK		5
-//#define PURPLE		6
-//#define RED			7
-//#define YELLOW		8
 		
 
 #define IDKpiece	"whiteish.png"
