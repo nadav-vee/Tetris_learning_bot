@@ -177,6 +177,7 @@
   <ItemGroup>
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Cell.cpp" />
+    <ClCompile Include="Piece.cpp" />
     <ClCompile Include="sfml_app.cpp" />
     <ClCompile Include="Stack.cpp" />
     <ClCompile Include="UserGame.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="const.h" />
+    <ClInclude Include="Piece.h" />
     <ClInclude Include="Stack.h" />
     <ClInclude Include="UserGame.h" />
   </ItemGroup>
@@ -198,6 +200,9 @@
     <Image Include="red.png" />
     <Image Include="whiteish.png" />
     <Image Include="yellow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="font.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

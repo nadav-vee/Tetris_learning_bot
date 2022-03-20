@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define PIECESIZE		4
+#define PIECESIZE		4						// the amount of cells in a piece
 #define SMALLPIECESIZE	3
 #define STACKH			20
 #define STACKW			10
@@ -21,7 +21,11 @@
 #define PLH				(SIZE*SCALE*PIECELIST*PIECESIZE)
 #define W				(BW+BUFF+PLW)
 #define H				(BH)
-		
+#define LINECLRSCORE	100
+#define TETRISSCORE		800
+#define BCKTOBCKSCORE	1200
+
+#define FONT		"font.ttf"
 
 #define IDKpiece	"whiteish.png"
 #define NOpiece		"grey.png"

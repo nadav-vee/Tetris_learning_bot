@@ -2,6 +2,8 @@
 
 Cell::Cell()
 {
+	x = 0;
+	y = 0;
 	val = false;
 	spr.setTexture(AssetManager::GetTexture(NOpiece));
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "Cell.h"
+#include "Piece.h"
 
 /// ---------------------------------------------------------------------------------
 /// a Stack conaining:
@@ -55,52 +55,19 @@
 
 
 
-enum ColorsType { WHITEISH, 
-                   GREY, 
-                  BLUE, 
-                  GREEN, 
-                  ORANGE, 
-                  PINK, 
-                  PURPLE, 
-                  RED, 
-                  YELLOW};
-
-class Piece
-{
-public:
-    Piece(enum ColorsType piecetype);
-    ~Piece();
-    void SetpiecePos(sf::Vector2i ps);
-    ColorsType getColorPiece();
-    sf::Vector2i GetPiecePos();
-    void Draw(sf::RenderWindow& window);
-    void Rotate();
-    void Move(int dir);
-    void RotWithoutOrigin();
-    void RotWithOrigin();
-    sf::Vector2i StackIndPos;
-
-private:
-    //sf::Vector2i Origin;
-    Cell* piece[PIECESIZE][PIECESIZE];
-    Cell* smallpiece[SMALLPIECESIZE][SMALLPIECESIZE];
-    void UpdatepiecePos();
-    ColorsType curPieceColor;
-};
-
-
 class Stack
 {
 public:
     Stack();
-    void Update();
+    ~Stack();
+    bool Update();
     void Draw(sf::RenderWindow& window);
     void CopyPeiceToStack();
-
-    bool StackColl();
-    bool BottomColl();
-    bool WallsColl();
+    void GameLogic(bool right, bool left, bool RotR, bool RotL);
     bool BlocksColl();
+    bool WallsColl();
+    bool BottomColl();
+    bool StackColl();
     int DeleteLine(int index); // returns score
 
 
@@ -108,6 +75,7 @@ public:
     void TemporaryChangepieceMethode();
     void GeneratepiecesQueue();
     Piece* curpiece;
+    int Score;
 
 private:
     Cell* board[STACKH][STACKW];

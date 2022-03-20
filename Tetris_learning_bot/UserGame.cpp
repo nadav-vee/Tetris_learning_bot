@@ -1,5 +1,7 @@
 #include "UserGame.h"
 
+using namespace std;
+
 UserGame::UserGame()
 {
 
@@ -14,13 +16,34 @@ void UserGame::Start()
 	Stack* s = new Stack();
 	sf::RenderWindow window(sf::VideoMode(W, H), "TETRIS DEEZ NUTS!");
 	sf::Clock clock;
-	float dt = 0, dttwo = 0;
+	// time variables
+	float dt = 0;
+	float dttwo = 0;
 	int dtthree = 0;
-	bool right = false, left = false;
-	bool torot = false, tomov = false;
+
+	// game logic variables
+	bool right = false;
+	bool left = false;
+	bool torotL = false;
+	bool tomov = false;
+	bool torotR = false;
+
+	// general game variables
+	bool restart = false;
+	sf::Text highscore;
+	sf::Text Score;
+
+	highscore.setString("High Score = 0");
+	highscore.setFillColor(sf::Color::Green);
+	highscore.setPosition(sf::Vector2f(BH + BUFF, BH / 2));
+	sf::Font font;
+	font.loadFromFile(FONT);
+	highscore.setFont(font);
+	Score.setFont(font);
+
 	while (window.isOpen())
 	{
-		//std::cout << dt << std::endl;
+		cout << "" << endl;
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -31,6 +54,7 @@ void UserGame::Start()
 		dt += clock.restart().asMilliseconds();
 		dttwo += dt;
 		dtthree += dt;
+
 		if (dtthree >= 10)
 		{
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
@@ -43,42 +67,69 @@ void UserGame::Start()
 			}
 			dtthree = 0;
 		}
-		std::cout << s->curpiece->StackIndPos.x << std::endl;
+
+
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
 		{
-			torot = true;
+			torotL = true;
 		}
-		if (dt >= 150)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::RShift))
 		{
-			window.clear();
-			if (torot)
-			{
-				s->curpiece->Rotate();
-				torot = false;
-			}
-			if (right)
-			{
-				s->curpiece->Move(1);
-				right = false;
-			}
-			if (left)
-			{
-				s->curpiece->Move(-1);
-				left = false;
-			}
+			torotR = true;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+		{
+			s->TemporaryChangepieceMethode();
+		}
+		window.clear();
+		if (dt >= 50)
+		{
+
 
 			if (dttwo >= 1000)
 			{
-				s->Update();
+				if (s->Update())
+				{
+
+				}
 
 				dttwo = 0;
 			}
 
-			s->Draw(window);
-
+			s->GameLogic(right, left, torotR, torotL);
+			left = false;
+			right = false;
+			torotL = false;
+			torotR = false;
 
 			dt = 0;
-			window.display();
+		}
+		s->Draw(window);
+
+		window.draw(highscore);
+
+		window.display();
+
+		if (restart)
+		{
+			string newhighscore = "High Score = " + s->Score;
+			highscore.setString(newhighscore);
+			// delete s;
+			s = new Stack();
+			// time variables
+			dt = 0;
+			dttwo = 0;
+			dtthree = 0;
+
+			// game logic variables
+			right = false;
+			left = false;
+			torotL = false;
+			tomov = false;
+			torotR = false;
+
+			// general game variables
+			restart = false;
 		}
 	}
 }
