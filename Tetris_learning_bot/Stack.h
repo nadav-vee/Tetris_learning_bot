@@ -62,23 +62,45 @@ public:
     ~Stack();
     bool Update();
     void Draw(sf::RenderWindow& window);
-    void CopyPeiceToStack();
-    void GameLogic(bool right, bool left, bool RotR, bool RotL);
+    int CopyPeiceToStack();
+    void GameLogic(bool right, bool left, bool RotR, bool RotL, bool tochange);
     bool BlocksColl();
     bool WallsColl();
     bool BottomColl();
     bool StackColl();
-    int DeleteLine(int index); // returns score
+    void CheckScore(int index); // returns scor
 
 
 
     void TemporaryChangepieceMethode();
     void GeneratepiecesQueue();
     Piece* curpiece;
-    int Score;
+    int Score = 0;
+    bool Combo = false;
 
 private:
+    bool CheckToDel(int index);
+    void DeleteLine(int index);
+    bool CheckTetris(int index); // returns score
     Cell* board[STACKH][STACKW];
     std::queue<Piece*> Qpieces;
 };
 
+// idea : 
+// make a piece buffer. that way you can revert 
+// moves in a smart way that won't cause trouble
+// with the rest of the code
+
+// idea: ( and game plan)
+// in order to make code generic and built for 
+// an ai to play it as well i'd have to seperate
+// userGame to a Game class and a UserGame class.
+// i'll also have to add a function that will check
+// the user input. (maybe through reference)
+// for the ai to be generic and seperate from the code
+// i'll have to be able to get the current state of the
+// game, calculate the best set of moves in the ai
+// and evetually send them.
+//      - get the current state
+//      - calculate set of moves
+//      - spread them

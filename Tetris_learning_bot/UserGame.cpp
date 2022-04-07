@@ -17,16 +17,20 @@ void UserGame::Start()
 	sf::RenderWindow window(sf::VideoMode(W, H), "TETRIS DEEZ NUTS!");
 	sf::Clock clock;
 	// time variables
-	float dt = 0;
-	float dttwo = 0;
-	int dtthree = 0;
+
+	float dtCounter = 0;
+	float dtGameLogic = 0;
+	float dtUpdate = 0;
+	float dtMov = 0;
+	float dtRot = 0;
 
 	// game logic variables
+	bool torotR = true;
+	bool torotL = true;
 	bool right = false;
 	bool left = false;
-	bool torotL = false;
 	bool tomov = false;
-	bool torotR = false;
+	bool TmpChgPceMthd = false;
 
 	// general game variables
 	bool restart = false;
@@ -43,7 +47,12 @@ void UserGame::Start()
 
 	while (window.isOpen())
 	{
-		cout << "" << endl;
+		dtCounter = clock.restart().asSeconds();
+		dtGameLogic += dtCounter;
+		dtUpdate += dtCounter;
+		dtMov += dtCounter;
+		dtRot += dtCounter;
+		//cout << "" << endl;
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -51,11 +60,8 @@ void UserGame::Start()
 				window.close();
 		}
 
-		dt += clock.restart().asMilliseconds();
-		dttwo += dt;
-		dtthree += dt;
 
-		if (dtthree >= 10)
+		if (dtMov >= 0.1)
 		{
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 			{
@@ -65,45 +71,47 @@ void UserGame::Start()
 			{
 				left = true;
 			}
-			dtthree = 0;
-		}
-
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
-		{
-			torotL = true;
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::RShift))
-		{
-			torotR = true;
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-		{
-			s->TemporaryChangepieceMethode();
-		}
-		window.clear();
-		if (dt >= 50)
-		{
-
-
-			if (dttwo >= 1000)
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 			{
-				if (s->Update())
-				{
-
-				}
-
-				dttwo = 0;
+				TmpChgPceMthd = true;
 			}
+			dtMov = 0;
+		}
+		if (dtRot >= 0.4)
+		{
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+			{
+				torotL = true;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::RShift))
+			{
+				torotR = true;
+			}
+		}
 
-			s->GameLogic(right, left, torotR, torotL);
+		if (dtGameLogic >= 0.5)
+		{
+
+
+			s->GameLogic(right, left, torotR, torotL, TmpChgPceMthd);
 			left = false;
 			right = false;
+			TmpChgPceMthd = false;
 			torotL = false;
 			torotR = false;
 
-			dt = 0;
+			dtGameLogic = 0;
 		}
+		if (dtUpdate >= 1)
+		{
+			if (s->Update())
+			{
+
+			}
+			dtUpdate = 0;
+		}
+		window.clear();
+
 		s->Draw(window);
 
 		window.draw(highscore);
@@ -117,9 +125,9 @@ void UserGame::Start()
 			// delete s;
 			s = new Stack();
 			// time variables
-			dt = 0;
+			/*dt = 0;
 			dttwo = 0;
-			dtthree = 0;
+			dtthree = 0;*/
 
 			// game logic variables
 			right = false;
