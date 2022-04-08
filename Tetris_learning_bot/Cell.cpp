@@ -6,6 +6,7 @@ Cell::Cell()
 	y = 0;
 	val = false;
 	spr.setTexture(AssetManager::GetTexture(NOpiece));
+	spr.setScale(SCALE, SCALE);
 }
 
 void Cell::SetTex(std::string& filename)
@@ -14,4 +15,9 @@ void Cell::SetTex(std::string& filename)
 	{
 		spr.setTexture(AssetManager::GetTexture(filename));
 	}
+}
+
+void Cell::SetPosInd(int i, int j) // height, width
+{
+	spr.setPosition(j * SIZE * SCALE, i * SIZE * SCALE);
 }

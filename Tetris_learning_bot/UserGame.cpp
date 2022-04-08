@@ -25,12 +25,14 @@ void UserGame::Start()
 	float dtRot = 0;
 
 	// game logic variables
-	bool torotR = true;
-	bool torotL = true;
+	bool torotR = false;
+	bool torotL = false;
 	bool right = false;
 	bool left = false;
 	bool tomov = false;
 	bool TmpChgPceMthd = false;
+	bool dropp = false;
+	bool fasterdown = false;
 
 	// general game variables
 	bool restart = false;
@@ -48,11 +50,9 @@ void UserGame::Start()
 	while (window.isOpen())
 	{
 		dtCounter = clock.restart().asSeconds();
-		dtGameLogic += dtCounter;
 		dtUpdate += dtCounter;
 		dtMov += dtCounter;
 		dtRot += dtCounter;
-		//cout << "" << endl;
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -60,8 +60,9 @@ void UserGame::Start()
 				window.close();
 		}
 
+		window.clear();
 
-		if (dtMov >= 0.1)
+		if (dtMov >= 0.150)
 		{
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 			{
@@ -71,14 +72,22 @@ void UserGame::Start()
 			{
 				left = true;
 			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+			{
+				fasterdown = true;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 			{
 				TmpChgPceMthd = true;
 			}
 			dtMov = 0;
 		}
-		if (dtRot >= 0.4)
+		if (dtRot >= 0.150)
 		{
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+			{
+				dropp = true;
+			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
 			{
 				torotL = true;
@@ -87,22 +96,19 @@ void UserGame::Start()
 			{
 				torotR = true;
 			}
+			dtRot = 0;
 		}
 
-		if (dtGameLogic >= 0.5)
-		{
+		s->GameLogic(right, left, torotR, torotL, TmpChgPceMthd, dropp, fasterdown);
+		left = false;
+		right = false;
+		TmpChgPceMthd = false;
+		torotL = false;
+		torotR = false;
+		dropp = false;
+		fasterdown = false;
 
-
-			s->GameLogic(right, left, torotR, torotL, TmpChgPceMthd);
-			left = false;
-			right = false;
-			TmpChgPceMthd = false;
-			torotL = false;
-			torotR = false;
-
-			dtGameLogic = 0;
-		}
-		if (dtUpdate >= 1)
+		if (dtUpdate >= 0.900)
 		{
 			if (s->Update())
 			{
@@ -110,7 +116,6 @@ void UserGame::Start()
 			}
 			dtUpdate = 0;
 		}
-		window.clear();
 
 		s->Draw(window);
 

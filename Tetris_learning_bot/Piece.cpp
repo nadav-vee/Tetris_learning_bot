@@ -7,7 +7,6 @@ Piece::Piece(enum ColorsType piecetype)
 	for (int i = 0; i < PIECESIZE; i++)
 	{
 		tetromino[i] = new Cell();
-		tetromino[i]->spr.setScale(SCALE, SCALE);
 		tetromino[i]->val = true;
 	}
 	pivot = 1;

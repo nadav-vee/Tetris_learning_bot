@@ -53,7 +53,7 @@
 ///		
 /// ---------------------------------------------------------------------------------
 
-
+enum buff{BUFFTOPIECE,PIECETOBUFF};
 
 class Stack
 {
@@ -63,7 +63,7 @@ public:
     bool Update();
     void Draw(sf::RenderWindow& window);
     int CopyPeiceToStack();
-    void GameLogic(bool right, bool left, bool RotR, bool RotL, bool tochange);
+    void GameLogic(bool right, bool left, bool RotR, bool RotL, bool tochange, bool dropp, bool fasterdown);
     bool BlocksColl();
     bool WallsColl();
     bool BottomColl();
@@ -74,7 +74,9 @@ public:
 
     void TemporaryChangepieceMethode();
     void GeneratepiecesQueue();
+    void CopyPieceFunc(enum buff buf);
     Piece* curpiece;
+    Piece* curpieceBuffer;
     int Score = 0;
     bool Combo = false;
 

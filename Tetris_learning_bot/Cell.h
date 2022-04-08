@@ -9,5 +9,6 @@ public:
 	sf::Sprite spr;
 	Cell();
 	void SetTex(std::string& filename);
+	void SetPosInd(int i, int j);// height, width
 };
 
