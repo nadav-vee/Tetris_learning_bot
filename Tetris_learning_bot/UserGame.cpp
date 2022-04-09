@@ -14,12 +14,11 @@ void UserGame::Start()
 	// change constants
 	AssetManager manager;
 	Stack* s = new Stack();
-	sf::RenderWindow window(sf::VideoMode(W, H), "TETRIS DEEZ NUTS!");
+	sf::RenderWindow window(sf::VideoMode(W, H), "TETRIS!");
 	sf::Clock clock;
 	// time variables
 
 	float dtCounter = 0;
-	float dtGameLogic = 0;
 	float dtUpdate = 0;
 	float dtMov = 0;
 	float dtRot = 0;
@@ -35,17 +34,33 @@ void UserGame::Start()
 	bool fasterdown = false;
 
 	// general game variables
-	bool restart = false;
-	sf::Text highscore;
+	bool* restart = (bool*)malloc(sizeof(bool));
+	*restart = false;
+	sf::Text highscoreTX;
 	sf::Text Score;
+	sf::Text LosingMessage;
+	sf::Font* font = new sf::Font();
+	HighScore = 0;
 
-	highscore.setString("High Score = 0");
-	highscore.setFillColor(sf::Color::Green);
-	highscore.setPosition(sf::Vector2f(BH + BUFF, BH / 2));
-	sf::Font font;
-	font.loadFromFile(FONT);
-	highscore.setFont(font);
-	Score.setFont(font);
+	font->loadFromFile(FONT);
+	highscoreTX.setFont(*font);
+	highscoreTX.setString("High Score = 0");
+	highscoreTX.setFillColor(sf::Color::Green);
+	highscoreTX.setPosition(sf::Vector2f(BW + 10, BH / 2));
+	highscoreTX.setCharacterSize(20);
+	Score.setFont(*font);
+	Score.setString("Score = 0");
+	Score.setFillColor(sf::Color::Green);
+	Score.setPosition(sf::Vector2f(BW + 10, BH / 2 + 20));
+	Score.setCharacterSize(25);
+
+	LosingMessage.setFont(*font);
+	LosingMessage.setString("YOU LOST!");
+	LosingMessage.setFillColor(sf::Color::Green);
+	LosingMessage.setCharacterSize(30);
+	sf::Vector2f LosingMessageBounds = { LosingMessage.getGlobalBounds().width, LosingMessage.getGlobalBounds().height };
+	LosingMessage.setOrigin(LosingMessageBounds.x/2, LosingMessageBounds.y/2);
+	LosingMessage.setPosition(W / 4, H / 4);
 
 	while (window.isOpen())
 	{
@@ -62,7 +77,7 @@ void UserGame::Start()
 
 		window.clear();
 
-		if (dtMov >= 0.150)
+		if (dtMov >= 0.150f)
 		{
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 			{
@@ -75,6 +90,7 @@ void UserGame::Start()
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 			{
 				fasterdown = true;
+				dtUpdate = 0;
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 			{
@@ -82,7 +98,7 @@ void UserGame::Start()
 			}
 			dtMov = 0;
 		}
-		if (dtRot >= 0.150)
+		if (dtRot >= 0.190f)
 		{
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 			{
@@ -108,41 +124,79 @@ void UserGame::Start()
 		dropp = false;
 		fasterdown = false;
 
-		if (dtUpdate >= 0.900)
+		if (dtUpdate >= 0.900f)
 		{
-			if (s->Update())
+			
+			s->Update(restart);
+			string sco = "Score = ";
+			sco += std::to_string(s->Score);
+			Score.setString(sco);
+			if (s->Score > HighScore)
 			{
-
+				HighScore = s->Score;
 			}
+			sco = "High Score = ";
+			sco += to_string(HighScore);
+			highscoreTX.setString(sco);
 			dtUpdate = 0;
 		}
 
 		s->Draw(window);
 
-		window.draw(highscore);
+		window.draw(Score);
+		window.draw(highscoreTX);
 
 		window.display();
 
-		if (restart)
+		if (*restart)
 		{
-			string newhighscore = "High Score = " + s->Score;
-			highscore.setString(newhighscore);
+			string sco = "High Score = ";
+			sco += std::to_string(HighScore);
+			highscoreTX.setString(sco);
 			// delete s;
 			s = new Stack();
 			// time variables
-			/*dt = 0;
-			dttwo = 0;
-			dtthree = 0;*/
+			float dtCounter = 0;
+			float dtUpdate = 0;
+			float dtMov = 0;
+			float dtRot = 0;
 
 			// game logic variables
-			right = false;
 			left = false;
+			right = false;
+			TmpChgPceMthd = false;
 			torotL = false;
-			tomov = false;
 			torotR = false;
+			dropp = false;
+			fasterdown = false;
+
 
 			// general game variables
-			restart = false;
+			*restart = false;
+
+			sf::RenderWindow windowyoulost(sf::VideoMode(W / 2, H / 2), "welp you dieded");
+			while (windowyoulost.isOpen())
+			{
+				sf::Event eventt;
+				while (windowyoulost.pollEvent(eventt))
+				{
+					if (eventt.type == sf::Event::Closed)
+						windowyoulost.close();
+				}
+				
+				windowyoulost.clear();
+
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+				{
+					windowyoulost.close();
+					dtRot -= 0.200;
+				}
+
+				windowyoulost.draw(LosingMessage);
+
+				windowyoulost.display();
+			}
 		}
 	}
+	free(restart);
 }

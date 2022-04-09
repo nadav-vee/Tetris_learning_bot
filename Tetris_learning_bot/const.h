@@ -24,7 +24,7 @@
 #define LINECLRSCORE	100
 #define TETRISSCORE		800
 #define BCKTOBCKSCORE	1200
-#define STARTINGXVAL	5
+#define STARTINGXVAL	4
 
 #define FONT		"font.ttf"
 

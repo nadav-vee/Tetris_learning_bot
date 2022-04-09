@@ -53,39 +53,39 @@
 ///		
 /// ---------------------------------------------------------------------------------
 
-enum buff{BUFFTOPIECE,PIECETOBUFF};
+enum buff { BUFFTOPIECE, PIECETOBUFF };
 
 class Stack
 {
 public:
-    Stack();
-    ~Stack();
-    bool Update();
-    void Draw(sf::RenderWindow& window);
-    int CopyPeiceToStack();
-    void GameLogic(bool right, bool left, bool RotR, bool RotL, bool tochange, bool dropp, bool fasterdown);
-    bool BlocksColl();
-    bool WallsColl();
-    bool BottomColl();
-    bool StackColl();
-    void CheckScore(int index); // returns scor
+	Stack();
+	~Stack();
+	bool Update(bool* toRes);
+	void Draw(sf::RenderWindow& window);
+	int CopyPeiceToStack();
+	void GameLogic(bool right, bool left, bool RotR, bool RotL, bool tochange, bool dropp, bool fasterdown);
+	bool BlocksColl();
+	bool WallsColl();
+	bool BottomColl();
+	bool StackColl();
+	void CheckScore(int index); // returns scor
 
 
 
-    void TemporaryChangepieceMethode();
-    void GeneratepiecesQueue();
-    void CopyPieceFunc(enum buff buf);
-    Piece* curpiece;
-    Piece* curpieceBuffer;
-    int Score = 0;
-    bool Combo = false;
+	void TemporaryChangepieceMethode();
+	void GeneratepiecesQueue();
+	void CopyPieceFunc(enum buff buf);
+	Piece* curpiece;
+	Piece* curpieceBuffer;
+	int Score = 0;
+	bool Combo = false;
 
 private:
-    bool CheckToDel(int index);
-    void DeleteLine(int index);
-    bool CheckTetris(int index); // returns score
-    Cell* board[STACKH][STACKW];
-    std::queue<Piece*> Qpieces;
+	bool CheckToDel(int index);
+	void DeleteLine(int index);
+	bool CheckTetris(int index); // returns score
+	Cell* board[STACKH][STACKW];
+	std::queue<Piece*> Qpieces;
 };
 
 // idea : 

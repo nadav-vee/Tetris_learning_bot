@@ -4,8 +4,8 @@
 ColorsType rs()
 {
 	ColorsType t = (ColorsType)((rand() % 7) + 2);
-	//return t;
-	return ColorsType::BLUE;
+	return t;
+	//return ColorsType::BLUE;
 }
 
 
@@ -32,10 +32,12 @@ Stack::Stack()
 
 
 
-bool Stack::Update()
+bool Stack::Update(bool* toRes)
 {
+	int score;
 	if (StackColl())
 	{
+		*toRes = true;
 		return true;
 	}
 	if (BottomColl())
@@ -58,6 +60,7 @@ bool Stack::Update()
 
 	return false;
 }
+
 
 void Stack::Draw(sf::RenderWindow& window)
 {
@@ -101,6 +104,8 @@ int Stack::CopyPeiceToStack()
 
 void Stack::GameLogic(bool right, bool left, bool RotR, bool RotL, bool tochange, bool dropp, bool fasterdown)
 {
+	bool* FaketoRes = (bool*)malloc(sizeof(bool));
+	*FaketoRes = false;
 	if (tochange)
 	{
 		TemporaryChangepieceMethode();
@@ -142,7 +147,7 @@ void Stack::GameLogic(bool right, bool left, bool RotR, bool RotL, bool tochange
 		bool dropping = true;
 		while (dropping)
 		{
-			if (Update())
+			if (Update(FaketoRes))
 			{
 				dropping = false;
 			}
@@ -150,9 +155,10 @@ void Stack::GameLogic(bool right, bool left, bool RotR, bool RotL, bool tochange
 	}
 	if (fasterdown)
 	{
-		Update();
+		Update(FaketoRes);
 	}
 	CopyPieceFunc(buff::PIECETOBUFF);
+	free(FaketoRes);
 }
 
 bool Stack::BlocksColl()
@@ -283,12 +289,24 @@ void Stack::DeleteLine(int index)
 bool Stack::CheckTetris(int index)
 {
 	bool Tet = true;
-	for (int i = 3; i >= 0; i--)
+	if (index - 3 > 0)
 	{
-		if (CheckToDel(index - i))
-			Score += 100;
-		else
-			Tet = false;
+		for (int i = 3; i >= 0; i--)
+		{
+			if (CheckToDel(index - i))
+				Score += 100;
+			else
+				Tet = false;
+		}
+	}
+	else
+	{
+		for (int i = index; i >= 0; i--)
+		{
+			if (CheckToDel(index - i))
+				Score += 100;
+		}
+		Tet = false;
 	}
 	if (Tet)
 		Score += 400;
@@ -308,7 +326,7 @@ void Stack::TemporaryChangepieceMethode()
 	delete curpiece;
 	delete curpieceBuffer;
 	Qpieces.push(NewPiece(rs())); // rs = random shape
-	Qpieces.front()->MoveT(-10);
+	Qpieces.front()->MoveT(-6);
 	curpiece = Qpieces.front();
 	ColorsType buffcolor = curpiece->getColorPiece();
 	curpieceBuffer = new Piece(buffcolor);

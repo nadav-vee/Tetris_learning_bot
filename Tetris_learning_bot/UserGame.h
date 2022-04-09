@@ -7,5 +7,6 @@ public:
 	UserGame();
 	void Start();
 private:
+	int HighScore;
 };
 
