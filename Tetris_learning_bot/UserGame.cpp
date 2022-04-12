@@ -32,35 +32,51 @@ void UserGame::Start()
 	bool TmpChgPceMthd = false;
 	bool dropp = false;
 	bool fasterdown = false;
+	bool hold = false;
+
+	// bug fixes with events
+	bool canPressSpace = true;
+	bool canPressRShift = true;
+	bool canPressReturn = true;
+	bool canPressUp = true;
 
 	// general game variables
 	bool* restart = (bool*)malloc(sizeof(bool));
 	*restart = false;
+
+	// Text and scoring:
 	sf::Text highscoreTX;
 	sf::Text Score;
 	sf::Text LosingMessage;
 	sf::Font* font = new sf::Font();
 	HighScore = 0;
-
-	font->loadFromFile(FONT);
+	font->loadFromFile(FONT); // font init
 	highscoreTX.setFont(*font);
 	highscoreTX.setString("High Score = 0");
 	highscoreTX.setFillColor(sf::Color::Green);
-	highscoreTX.setPosition(sf::Vector2f(BW + 10, BH / 2));
+	highscoreTX.setPosition(sf::Vector2f(SCOREALLIGN, H / 2));
 	highscoreTX.setCharacterSize(20);
+	//
 	Score.setFont(*font);
 	Score.setString("Score = 0");
 	Score.setFillColor(sf::Color::Green);
-	Score.setPosition(sf::Vector2f(BW + 10, BH / 2 + 20));
+	Score.setPosition(sf::Vector2f(SCOREALLIGN, H / 2 + 20));
 	Score.setCharacterSize(25);
-
+	//
 	LosingMessage.setFont(*font);
 	LosingMessage.setString("YOU LOST!");
 	LosingMessage.setFillColor(sf::Color::Green);
 	LosingMessage.setCharacterSize(30);
 	sf::Vector2f LosingMessageBounds = { LosingMessage.getGlobalBounds().width, LosingMessage.getGlobalBounds().height };
-	LosingMessage.setOrigin(LosingMessageBounds.x/2, LosingMessageBounds.y/2);
+	LosingMessage.setOrigin(LosingMessageBounds.x / 2, LosingMessageBounds.y / 2);
 	LosingMessage.setPosition(W / 4, H / 4);
+
+	// Design variables:
+	sf::RectangleShape* upperHoldLine = new sf::RectangleShape(
+		sf::Vector2f(PLW*2,5));
+	upperHoldLine->setPosition(sf::Vector2f(W - PLW*2, H - (PLW*1.5 + BUFF)));
+	upperHoldLine->setFillColor(sf::Color::Green);
+
 
 	while (window.isOpen())
 	{
@@ -71,8 +87,40 @@ void UserGame::Start()
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
-			if (event.type == sf::Event::Closed)
+			if (event.type == sf::Event::Closed || 
+				(event.type == sf::Event::KeyPressed &&
+					event.key.code == sf::Keyboard::Escape))
 				window.close();
+			if (event.type == sf::Event::KeyReleased
+				&& event.key.code == sf::Keyboard::Space)
+			{
+				canPressSpace = true;
+			}
+			if (event.type == sf::Event::KeyReleased
+				&& event.key.code == sf::Keyboard::Up)
+			{
+				canPressUp = true;
+			}
+			if (event.type == sf::Event::KeyPressed
+				&& event.key.code == sf::Keyboard::RShift)
+			{
+				canPressReturn = false;
+			}
+			if (event.type == sf::Event::KeyPressed
+				&& event.key.code == sf::Keyboard::Return)
+			{
+				canPressRShift = false;
+			}
+			if (event.type == sf::Event::KeyReleased
+				&& event.key.code == sf::Keyboard::RShift)
+			{
+				canPressReturn = true;
+			}
+			if (event.type == sf::Event::KeyReleased
+				&& event.key.code == sf::Keyboard::Return)
+			{
+				canPressRShift = true;
+			}
 		}
 
 		window.clear();
@@ -98,24 +146,32 @@ void UserGame::Start()
 			}
 			dtMov = 0;
 		}
-		if (dtRot >= 0.190f)
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && canPressSpace)
 		{
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-			{
-				dropp = true;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+			dropp = true;
+			canPressSpace = false;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && canPressUp)
+		{
+			hold = true;
+			canPressUp = false;
+		}
+
+		if (dtRot >= 0.160f)
+		{
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return) && canPressReturn)
 			{
 				torotL = true;
 			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::RShift))
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::RShift) && canPressRShift)
 			{
 				torotR = true;
 			}
 			dtRot = 0;
 		}
 
-		s->GameLogic(right, left, torotR, torotL, TmpChgPceMthd, dropp, fasterdown);
+		s->GameLogic(right, left, torotR, torotL, TmpChgPceMthd, dropp, fasterdown, hold);
 		left = false;
 		right = false;
 		TmpChgPceMthd = false;
@@ -123,10 +179,11 @@ void UserGame::Start()
 		torotR = false;
 		dropp = false;
 		fasterdown = false;
+		hold = false;
 
 		if (dtUpdate >= 0.900f)
 		{
-			
+
 			s->Update(restart);
 			string sco = "Score = ";
 			sco += std::to_string(s->Score);
@@ -145,9 +202,10 @@ void UserGame::Start()
 
 		window.draw(Score);
 		window.draw(highscoreTX);
+		window.draw(*upperHoldLine);
 
 		window.display();
-
+		////////////////////////////////////////
 		if (*restart)
 		{
 			string sco = "High Score = ";
@@ -169,6 +227,7 @@ void UserGame::Start()
 			torotR = false;
 			dropp = false;
 			fasterdown = false;
+			hold = false;
 
 
 			// general game variables
@@ -177,26 +236,36 @@ void UserGame::Start()
 			sf::RenderWindow windowyoulost(sf::VideoMode(W / 2, H / 2), "welp you dieded");
 			while (windowyoulost.isOpen())
 			{
+				dtCounter = clock.restart().asSeconds();
+
 				sf::Event eventt;
 				while (windowyoulost.pollEvent(eventt))
 				{
 					if (eventt.type == sf::Event::Closed)
 						windowyoulost.close();
+					/**/
+					if (eventt.type == sf::Event::KeyPressed
+						&& eventt.key.code == sf::Keyboard::Space)
+					{
+						windowyoulost.close();
+						canPressSpace = false;
+					}
 				}
-				
+
 				windowyoulost.clear();
 
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-				{
-					windowyoulost.close();
-					dtRot -= 0.200;
-				}
+				//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+				//{
+				//	windowyoulost.close();
+				//	dtRot -= 0.200;
+				//}
 
 				windowyoulost.draw(LosingMessage);
 
 				windowyoulost.display();
 			}
 		}
+		////////////////////////////////////////
 	}
 	free(restart);
 }

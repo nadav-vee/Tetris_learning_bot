@@ -18,17 +18,20 @@
 #define BW				(SIZE*SCALE*STACKW)
 #define BH				(SIZE*SCALE*STACKH)
 #define PLW				(SIZE*SCALE*PIECESIZE)
-#define PLH				(SIZE*SCALE*PIECELIST*PIECESIZE)
-#define W				(BW+BUFF+PLW)
-#define H				(BH)
+#define PLH				(SIZE*SCALE*PIECESIZE)
+#define W				(BW+PLW*3)
+#define H				(BH + PLH + BUFF)
+#define SCOREALLIGN		(BW + PLW + 10)
 #define LINECLRSCORE	100
 #define TETRISSCORE		800
 #define BCKTOBCKSCORE	1200
 #define STARTINGXVAL	4
+#define NEXTPXVAL		11
+#define HELDPYVAL		19
 
 #define FONT		"font.ttf"
 
-#define IDKpiece	"whiteish.png"
+#define Shadowpiece	"shadow.png"
 #define NOpiece		"grey.png"
 #define Ipiece		"blue.png"
 #define Spiece		"green.png"

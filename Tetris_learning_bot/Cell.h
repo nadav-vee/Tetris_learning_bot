@@ -8,7 +8,7 @@ public:
 	bool val;
 	sf::Sprite spr;
 	Cell();
-	void SetTex(std::string& filename);
+	void SetTex(std::string const& filename);
 	void SetPosInd(int i, int j);// height, width
 };
 

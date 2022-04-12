@@ -9,7 +9,7 @@ Cell::Cell()
 	spr.setScale(SCALE, SCALE);
 }
 
-void Cell::SetTex(std::string& filename)
+void Cell::SetTex(std::string const& filename)
 {
 	if (val == true)
 	{
@@ -19,5 +19,5 @@ void Cell::SetTex(std::string& filename)
 
 void Cell::SetPosInd(int i, int j) // height, width
 {
-	spr.setPosition(j * SIZE * SCALE, i * SIZE * SCALE);
+	spr.setPosition(j * SIZE * SCALE + PLH, i * SIZE * SCALE + PLH);
 }

@@ -2,7 +2,7 @@
 #include "Cell.h"
 
 enum ColorsType {
-    WHITEISH,
+    SHADOW,
     GREY,
     BLUE,
     GREEN,
@@ -19,6 +19,12 @@ public:
     Piece(enum ColorsType piecetype);
     ~Piece();
     ColorsType getColorPiece();
+    void setColorPiece(ColorsType color);
+    ////////////////
+    void SetStartingPos();
+    void SetNextPosition();
+    void SetHeldPosition();
+    void Shadow();
     ////////////////
     void MoveT(int dir);
     void MoveTdown();
@@ -30,6 +36,7 @@ public:
     Cell* tetromino[PIECESIZE];
 
 private:
+    void ResetPos();
     int pivot;
     //sf::Vector2i Origin;
     void UpdateTetrominoPos();

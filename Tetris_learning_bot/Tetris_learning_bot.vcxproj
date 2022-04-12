@@ -175,6 +175,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AI.cpp" />
+    <ClCompile Include="AIGame.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Cell.cpp" />
     <ClCompile Include="Piece.cpp" />
@@ -183,6 +185,8 @@
     <ClCompile Include="UserGame.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AI.h" />
+    <ClInclude Include="AIGame.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="const.h" />
@@ -198,7 +202,7 @@
     <Image Include="pink.png" />
     <Image Include="purple.png" />
     <Image Include="red.png" />
-    <Image Include="whiteish.png" />
+    <Image Include="shadow.png" />
     <Image Include="yellow.png" />
   </ItemGroup>
   <ItemGroup>

@@ -7,6 +7,10 @@ public:
 	UserGame();
 	void Start();
 private:
-	int HighScore;
+	sf::Text highscoreTX;
+	sf::Text Score;
+	sf::Text LosingMessage;
+	sf::Font* font = new sf::Font();
+	int HighScore = 0;
 };
 

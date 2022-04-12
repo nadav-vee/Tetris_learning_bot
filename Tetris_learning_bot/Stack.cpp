@@ -22,12 +22,37 @@ Stack::Stack()
 
 	ColorsType initcolor = rs();
 	curpiece = new Piece(initcolor);
+	curpiece->SetStartingPos();
 	curpieceBuffer = new Piece(initcolor);
-	curpiece->MoveT(STARTINGXVAL);
+	shadow = new Piece(initcolor);
+	shadow->Shadow();
 	CopyPieceFunc(buff::PIECETOBUFF);
 
 	GeneratepiecesQueue(); // generating the queue
 
+}
+
+Stack::~Stack()
+{
+	delete curpiece;
+	delete curpieceBuffer;
+	delete held;
+	delete heldBuffer;
+	delete shadow;
+	int Qsize = Qpieces.size();
+	for (int i = 0; i < Qsize; i++)
+	{
+		Piece* toDel = Qpieces.front();
+		Qpieces.pop();
+		delete toDel;
+	}
+	for (int i = 0; i < STACKH; i++)
+	{
+		for (int j = 0; j < STACKW; j++)
+		{
+			delete board[i][j];
+		}
+	}
 }
 
 
@@ -43,7 +68,7 @@ bool Stack::Update(bool* toRes)
 	if (BottomColl())
 	{
 		CheckScore(CopyPeiceToStack());
-		TemporaryChangepieceMethode();
+		SwitchPiece();
 		return true;
 	}
 	curpiece->MoveTdown();
@@ -53,10 +78,11 @@ bool Stack::Update(bool* toRes)
 		curpiece->MoveTup();
 		curpieceBuffer->MoveTup();
 		CheckScore(CopyPeiceToStack());
-		TemporaryChangepieceMethode();
+		SwitchPiece();
 		return true;
 	}
-
+	if (IsShadowColl())
+		toggleShadow = false;
 
 	return false;
 }
@@ -74,6 +100,40 @@ void Stack::Draw(sf::RenderWindow& window)
 	// curpiece->DrawP(window);
 	curpiece->DrawT(window);
 	Qpieces.front()->DrawT(window);
+	if (toggleShadow)
+	{
+		shadow->DrawT(window);
+	}
+	if (isHolding)
+	{
+		held->DrawT(window);
+	}
+}
+
+void Stack::SwitchPiece()
+{
+	delete curpiece;
+	delete curpieceBuffer;
+	delete shadow;
+	Qpieces.push(NewPiece(rs())); // rs = random shape
+	Qpieces.front()->MoveT(-7);
+	curpiece = Qpieces.front();
+	ColorsType buffcolor = curpiece->getColorPiece();
+	curpieceBuffer = new Piece(buffcolor);
+	CopyPieceFunc(buff::PIECETOBUFF);
+	shadow = new Piece(buffcolor);
+	SetShadow();
+	Qpieces.pop();
+	didInsertToHold = false;
+}
+
+void Stack::GeneratepiecesQueue()
+{
+	for (int i = 0; i < PIECELIST; i++) // generating list
+	{
+		int Rpiece = ((rand() % 7) + 2);
+		Qpieces.push(NewPiece((ColorsType)Rpiece));
+	}
 }
 
 int Stack::CopyPeiceToStack()
@@ -102,13 +162,14 @@ int Stack::CopyPeiceToStack()
 	return y;
 }
 
-void Stack::GameLogic(bool right, bool left, bool RotR, bool RotL, bool tochange, bool dropp, bool fasterdown)
+void Stack::GameLogic(bool right, bool left, bool RotR,
+	bool RotL, bool tochange, bool dropp, bool fasterdown, bool hold)
 {
 	bool* FaketoRes = (bool*)malloc(sizeof(bool));
 	*FaketoRes = false;
 	if (tochange)
 	{
-		TemporaryChangepieceMethode();
+		SwitchPiece();
 	}
 	if (RotL)
 	{
@@ -129,10 +190,12 @@ void Stack::GameLogic(bool right, bool left, bool RotR, bool RotL, bool tochange
 	if (right)
 	{
 		curpiece->MoveT(1);
+		shadow->MoveT(1);
 		if (BlocksColl() || WallsColl())
 		{
 			CopyPieceFunc(buff::BUFFTOPIECE);
 		}
+
 	}
 	if (left)
 	{
@@ -141,9 +204,11 @@ void Stack::GameLogic(bool right, bool left, bool RotR, bool RotL, bool tochange
 		{
 			CopyPieceFunc(buff::BUFFTOPIECE);
 		}
+
 	}
 	if (dropp)
 	{
+		toggleShadow = false;
 		bool dropping = true;
 		while (dropping)
 		{
@@ -157,7 +222,16 @@ void Stack::GameLogic(bool right, bool left, bool RotR, bool RotL, bool tochange
 	{
 		Update(FaketoRes);
 	}
+	if (hold)
+	{
+		if (!didInsertToHold)
+		{
+			Hold();
+		}
+	}
 	CopyPieceFunc(buff::PIECETOBUFF);
+	CopyPieceFunc(buff::PIECETOSHADOW);
+	SetShadow();
 	free(FaketoRes);
 }
 
@@ -171,6 +245,17 @@ bool Stack::BlocksColl()
 		if (x < 10 && x >= 0 && y >= 0 && y < 20)
 		{
 			if (board[y][x]->val == true)
+			{
+				return true;
+			}
+		}
+	}
+	if (y < 0)
+	{
+		y = 0;
+		for (int i = 0; i < STACKW; i++)
+		{
+			if (board[y][i]->val == true)
 			{
 				return true;
 			}
@@ -241,6 +326,153 @@ void Stack::CheckScore(int index)
 	}
 }
 
+void Stack::Hold()
+{
+	if (isHolding)
+	{
+		CopyPieceFunc(buff::HELDTOHBUFF);
+		CopyPieceFunc(buff::PIECETOHELD);
+		CopyPieceFunc(buff::HBUFFTOPIECE);
+		held->SetHeldPosition();
+		curpiece->SetStartingPos();
+	}
+	else
+	{
+		held = new Piece(ColorsType::GREY);
+		heldBuffer = new Piece(ColorsType::GREY);
+		CopyPieceFunc(buff::PIECETOHELD);
+		CopyPieceFunc(buff::HELDTOHBUFF);
+		held->SetHeldPosition();
+		isHolding = true;
+		SwitchPiece();
+	}
+	didInsertToHold = true;
+}
+
+void Stack::SetShadow()
+{
+	CopyPieceFunc(buff::PIECETOSHADOW);
+	bool* FaketoRes = (bool*)malloc(sizeof(bool));
+	*FaketoRes = false;
+	bool dropping = true;
+	while (dropping)
+	{
+		if (ShadowUpdate(FaketoRes))
+		{
+			dropping = false;
+		}
+	}
+	if (*FaketoRes)
+	{
+		toggleShadow = false;
+	}
+	else
+	{
+		toggleShadow = true;
+	}
+	free(FaketoRes);
+	if (IsShadowColl())
+		toggleShadow = false;
+}
+
+
+
+bool Stack::IsShadowColl()
+{
+	bool col = false;
+
+	for (int c = 0; c < PIECESIZE; c++)
+	{
+		for (int s = 0; s < PIECESIZE; s++)
+		{
+			if (curpiece->tetromino[c]->x == shadow->tetromino[s]->x
+				&& curpiece->tetromino[c]->y == shadow->tetromino[s]->y)
+			{
+				col = true;
+			}
+		}
+	}
+	return col;
+}
+
+bool Stack::ShadowUpdate(bool* toRes)
+{
+	if (ShadowStackColl())
+	{
+		*toRes = true;
+		return true;
+	}
+	if (ShadowBottomColl())
+	{
+		return true;
+	}
+	shadow->MoveTdown();
+	if (ShadowBlocksColl())
+	{
+		shadow->MoveTup();
+		return true;
+	}
+	return false;
+}
+
+bool Stack::ShadowStackColl()
+{
+	bool Lost = false;
+	for (int i = 0; i < PIECESIZE; i++)
+	{
+		int y = shadow->tetromino[i]->y;
+		if (BlocksColl() && y < 1)
+		{
+			Lost = true;
+		}
+	}
+	return Lost;
+}
+
+bool Stack::ShadowBlocksColl()
+{
+	int x, y;
+	for (int i = 0; i < PIECESIZE; i++)
+	{
+		x = shadow->tetromino[i]->x;
+		y = shadow->tetromino[i]->y;
+		if (x < 10 && x >= 0 && y >= 0 && y < 20)
+		{
+			if (board[y][x]->val == true)
+			{
+				return true;
+			}
+		}
+	}
+	if (y < 0)
+	{
+		y = 0;
+		for (int i = 0; i < STACKW; i++)
+		{
+			if (board[y][i]->val == true)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool Stack::ShadowBottomColl()
+{
+	int y;
+	for (int i = 0; i < PIECESIZE; i++)
+	{
+		y = shadow->tetromino[i]->y;
+		if (y + 1 > 19)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
 bool Stack::CheckToDel(int index)
 {
 	bool todel = true;
@@ -282,7 +514,7 @@ void Stack::DeleteLine(int index)
 	for (int j = 0; j < STACKW; j++)
 	{
 		board[0][j] = new Cell();
-		board[0][j]->SetPosInd(0,j);
+		board[0][j]->SetPosInd(0, j);
 	}
 }
 
@@ -313,56 +545,78 @@ bool Stack::CheckTetris(int index)
 	return Tet;
 }
 
-Piece* NewPiece(ColorsType rp)
+Piece* Stack::NewPiece(ColorsType rp)
 {
 	Piece* tmpP = new Piece(rp);
-	tmpP->MoveT(10);
+	tmpP->SetNextPosition();
 	return tmpP;
 }
 
 
-void Stack::TemporaryChangepieceMethode()
-{
-	delete curpiece;
-	delete curpieceBuffer;
-	Qpieces.push(NewPiece(rs())); // rs = random shape
-	Qpieces.front()->MoveT(-6);
-	curpiece = Qpieces.front();
-	ColorsType buffcolor = curpiece->getColorPiece();
-	curpieceBuffer = new Piece(buffcolor);
-	CopyPieceFunc(buff::PIECETOBUFF);
-	Qpieces.pop();
-}
-
-void Stack::GeneratepiecesQueue()
-{
-	for (int i = 0; i < PIECELIST; i++) // generating list
-	{
-		int Rpiece = ((rand() % 7) + 2);
-		Qpieces.push(NewPiece((ColorsType)Rpiece));
-	}
-}
-
 void Stack::CopyPieceFunc(enum buff buf)
 {
-	if (buf)
+	switch (buf)
 	{
+	case BUFFTOPIECE:
 		for (int i = 0; i < PIECESIZE; i++)
 		{
-			curpieceBuffer->tetromino[i]->spr = curpiece->tetromino[i]->spr;
-			curpieceBuffer->tetromino[i]->val = curpiece->tetromino[i]->val;
-			curpieceBuffer->tetromino[i]->x = curpiece->tetromino[i]->x;
-			curpieceBuffer->tetromino[i]->y = curpiece->tetromino[i]->y;
-		}
-	}
-	else
-	{
-		for (int i = 0; i < PIECESIZE; i++)
-		{
+			curpiece->setColorPiece(curpieceBuffer->getColorPiece());
 			curpiece->tetromino[i]->spr = curpieceBuffer->tetromino[i]->spr;
 			curpiece->tetromino[i]->val = curpieceBuffer->tetromino[i]->val;
 			curpiece->tetromino[i]->x = curpieceBuffer->tetromino[i]->x;
 			curpiece->tetromino[i]->y = curpieceBuffer->tetromino[i]->y;
 		}
+		break;
+	case PIECETOBUFF:
+		for (int i = 0; i < PIECESIZE; i++)
+		{
+			curpieceBuffer->setColorPiece(curpiece->getColorPiece());
+			curpieceBuffer->tetromino[i]->spr = curpiece->tetromino[i]->spr;
+			curpieceBuffer->tetromino[i]->val = curpiece->tetromino[i]->val;
+			curpieceBuffer->tetromino[i]->x = curpiece->tetromino[i]->x;
+			curpieceBuffer->tetromino[i]->y = curpiece->tetromino[i]->y;
+		}
+		break;
+	case PIECETOHELD:
+		for (int i = 0; i < PIECESIZE; i++)
+		{
+			held ->setColorPiece(curpiece->getColorPiece());
+			held->tetromino[i]->spr = curpiece->tetromino[i]->spr;
+			held->tetromino[i]->val = curpiece->tetromino[i]->val;
+			held->tetromino[i]->x = curpiece->tetromino[i]->x;
+			held->tetromino[i]->y = curpiece->tetromino[i]->y;
+		}
+		break;
+	case HELDTOHBUFF:
+		for (int i = 0; i < PIECESIZE; i++)
+		{
+			heldBuffer->setColorPiece(held->getColorPiece());
+			heldBuffer->tetromino[i]->spr = held->tetromino[i]->spr;
+			heldBuffer->tetromino[i]->val = held->tetromino[i]->val;
+			heldBuffer->tetromino[i]->x = held->tetromino[i]->x;
+			heldBuffer->tetromino[i]->y = held->tetromino[i]->y;
+		}
+		break;
+	case HBUFFTOPIECE:
+		for (int i = 0; i < PIECESIZE; i++)
+		{
+			curpiece->setColorPiece(heldBuffer->getColorPiece());
+			curpiece->tetromino[i]->spr = heldBuffer->tetromino[i]->spr;
+			curpiece->tetromino[i]->val = heldBuffer->tetromino[i]->val;
+			curpiece->tetromino[i]->x = heldBuffer->tetromino[i]->x;
+			curpiece->tetromino[i]->y = heldBuffer->tetromino[i]->y;
+		}
+		break;
+	case PIECETOSHADOW:
+		for (int i = 0; i < PIECESIZE; i++)
+		{
+			shadow->tetromino[i]->val = curpiece->tetromino[i]->val;
+			shadow->tetromino[i]->x = curpiece->tetromino[i]->x;
+			shadow->tetromino[i]->y = curpiece->tetromino[i]->y;
+			shadow->tetromino[i]->SetTex(Shadowpiece);
+		}
+		break;
+	default:
+		break;
 	}
 }

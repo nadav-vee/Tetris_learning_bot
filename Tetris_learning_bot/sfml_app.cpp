@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "UserGame.h"
+#include "AIGame.h"
 
 int main()
 {

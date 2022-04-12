@@ -53,7 +53,8 @@
 ///		
 /// ---------------------------------------------------------------------------------
 
-enum buff { BUFFTOPIECE, PIECETOBUFF };
+enum buff { BUFFTOPIECE, PIECETOBUFF, PIECETOHELD, HELDTOHBUFF, HBUFFTOPIECE,
+			PIECETOSHADOW};
 
 class Stack
 {
@@ -63,27 +64,42 @@ public:
 	bool Update(bool* toRes);
 	void Draw(sf::RenderWindow& window);
 	int CopyPeiceToStack();
-	void GameLogic(bool right, bool left, bool RotR, bool RotL, bool tochange, bool dropp, bool fasterdown);
+	void GameLogic(bool right, bool left, bool RotR, bool RotL, 
+		bool tochange, bool dropp, bool fasterdown, bool hold);
 	bool BlocksColl();
 	bool WallsColl();
 	bool BottomColl();
 	bool StackColl();
 	void CheckScore(int index); // returns scor
+	void Hold();
+	void SetShadow();
 
 
 
-	void TemporaryChangepieceMethode();
+	void SwitchPiece();
 	void GeneratepiecesQueue();
 	void CopyPieceFunc(enum buff buf);
 	Piece* curpiece;
 	Piece* curpieceBuffer;
+	Piece* held;
+	Piece* heldBuffer;
+	Piece* shadow;
 	int Score = 0;
 	bool Combo = false;
 
 private:
+	Piece* NewPiece(ColorsType rp);
+	bool IsShadowColl();
+	bool ShadowUpdate(bool* toRes);
+	bool ShadowStackColl();
+	bool ShadowBlocksColl();
+	bool ShadowBottomColl();
 	bool CheckToDel(int index);
 	void DeleteLine(int index);
 	bool CheckTetris(int index); // returns score
+	bool toggleShadow = true;
+	bool isHolding = false;
+	bool didInsertToHold = false;
 	Cell* board[STACKH][STACKW];
 	std::queue<Piece*> Qpieces;
 };
