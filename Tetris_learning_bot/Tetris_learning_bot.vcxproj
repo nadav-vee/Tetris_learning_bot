@@ -177,6 +177,8 @@
   <ItemGroup>
     <ClCompile Include="AI.cpp" />
     <ClCompile Include="AIGame.cpp" />
+    <ClCompile Include="AIHeuristic.cpp" />
+    <ClCompile Include="AIprocessing.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Cell.cpp" />
     <ClCompile Include="Piece.cpp" />
@@ -187,6 +189,8 @@
   <ItemGroup>
     <ClInclude Include="AI.h" />
     <ClInclude Include="AIGame.h" />
+    <ClInclude Include="AIHeuristic.h" />
+    <ClInclude Include="AIprocessing.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="const.h" />
