@@ -70,12 +70,9 @@ public:
 	bool WallsColl();
 	bool BottomColl();
 	bool StackColl();
-	void CheckScore(int index); // returns scor
+	void CheckScore(int index);
 	void Hold();
 	void SetShadow();
-
-
-
 	void SwitchPiece();
 	void GeneratepiecesQueue();
 	void CopyPieceFunc(enum buff buf);
@@ -86,6 +83,8 @@ public:
 	Piece* shadow;
 	int Score = 0;
 	bool Combo = false;
+	Cell* board[STACKH][STACKW];
+	std::queue<Piece*> Qpieces;
 
 private:
 	Piece* NewPiece(ColorsType rp);
@@ -96,12 +95,10 @@ private:
 	bool ShadowBottomColl();
 	bool CheckToDel(int index);
 	void DeleteLine(int index);
-	bool CheckTetris(int index); // returns score
+	bool CheckTetris(int index);
 	bool toggleShadow = true;
 	bool isHolding = false;
 	bool didInsertToHold = false;
-	Cell* board[STACKH][STACKW];
-	std::queue<Piece*> Qpieces;
 };
 
 // idea : 

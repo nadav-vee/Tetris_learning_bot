@@ -1,7 +1,6 @@
 //#pragma once
 //#include "const.h"
-//
-//class Tetris;
+//#include "Stack.h"
 //
 //class AIDebugHeuristic
 //{
@@ -19,7 +18,7 @@
 //
 //	}
 //
-//	virtual float GetScore(const Tetris* original, Tetris* newTetrisBoard) = 0;
+//	virtual float GetScore(const Stack* original, Stack* newTetrisBoard) = 0;
 //	float m_scalar;
 //};
 //
@@ -27,35 +26,35 @@
 //{
 //public:
 //	using AIHeuristic::AIHeuristic;
-//	virtual float GetScore(const Tetris* original, Tetris* tetrisBoard);
+//	virtual float GetScore(const Stack* original, Stack* tetrisBoard);
 //};
 //
 //class AIHeuristic_HighestCol : public AIHeuristic
 //{
 //public:
 //	using AIHeuristic::AIHeuristic;
-//	virtual float GetScore(const Tetris* original, Tetris* tetrisBoard);
+//	virtual float GetScore(const Stack* original, Stack* tetrisBoard);
 //};
 //
 //class AIHeuristic_DeepestHole : public AIHeuristic
 //{
 //public:
 //	using AIHeuristic::AIHeuristic;
-//	virtual float GetScore(const Tetris* original, Tetris* tetrisBoard);
+//	virtual float GetScore(const Stack* original, Stack* tetrisBoard);
 //};
 //
 //class AIHeuristic_GameLoss : public AIHeuristic
 //{
 //public:
 //	using AIHeuristic::AIHeuristic;
-//	virtual float GetScore(const Tetris* original, Tetris* tetrisBoard);
+//	virtual float GetScore(const Stack* original, Stack* tetrisBoard);
 //};
 //
 //class AIHeuristic_CompletedLines : public AIHeuristic
 //{
 //public:
 //	using AIHeuristic::AIHeuristic;
-//	virtual float GetScore(const Tetris* original, Tetris* tetrisBoard);
+//	virtual float GetScore(const Stack* original, Stack* tetrisBoard);
 //};
 //
 //class AIHeuristic_Holes : public AIHeuristic

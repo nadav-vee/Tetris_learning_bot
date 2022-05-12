@@ -5,13 +5,13 @@
 //{
 //	float result = 0.0f;
 //
-//	for (int i = 0; i < tetrisBoard->m_cols; i++)
+//	for (int i = 0; i < STACKW; i++)
 //	{
-//		for (int j = 0; j < tetrisBoard->m_rows; j++)
+//		for (int j = 0; j < STACKH; j++)
 //		{
-//			if (tetrisBoard->m_grid.m_cells[i][j].m_isFilled)
+//			if (tetrisBoard->board[i][j]->val)
 //			{
-//				result += tetrisBoard->m_rows - j;
+//				result += STACKH - j;
 //				break;
 //			}
 //		}
@@ -20,13 +20,13 @@
 //	return m_scalar * result;
 //}
 //
-//float AIHeuristic_CompletedLines::GetScore(const Tetris* original, Tetris* tetrisBoard)
+//float AIHeuristic_CompletedLines::GetScore(const Stack* original, Stack* tetrisBoard)
 //{
 //	float result = (float)(tetrisBoard->m_clearedRows - original->m_clearedRows);
 //	return m_scalar * result;
 //}
 //
-//float AIHeuristic_Holes::GetScore(const Tetris* original, Tetris* tetrisBoard)
+//float AIHeuristic_Holes::GetScore(const Stack* original, Stack* tetrisBoard)
 //{
 //	float result = 0.0f;
 //

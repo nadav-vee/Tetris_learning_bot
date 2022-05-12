@@ -21,3 +21,4 @@ void Cell::SetPosInd(int i, int j) // height, width
 {
 	spr.setPosition(j * SIZE * SCALE + PLH, i * SIZE * SCALE + PLH);
 }
+

@@ -1,14 +1,17 @@
 #include "Stack.h"
 
 
+/// <summary>
+///		a simple random for the piece queue
+/// </summary>
 ColorsType rs()
 {
-	ColorsType t = (ColorsType)((rand() % 7) + 2);
-	return t;
-	//return ColorsType::BLUE;
+	return (ColorsType)((rand() % 7) + 2);
 }
 
-
+/// <summary>
+///		a constructor of the Stack type the main structure of the tetris game
+/// </summary>
 Stack::Stack()
 {
 	for (int i = 0; i < STACKH; i++)
@@ -31,7 +34,9 @@ Stack::Stack()
 	GeneratepiecesQueue(); // generating the queue
 
 }
-
+/// <summary>
+///		a destructor of the Stack type which is the main class of the tetris game
+/// </summary>
 Stack::~Stack()
 {
 	delete curpiece;
@@ -56,10 +61,19 @@ Stack::~Stack()
 }
 
 
-
+/// <summary>
+///		an update method that consetrates all collision checking and buffer handling
+///		the function also handles the piece "shadow"
+/// </summary>
+/// <param name="toRes">
+///		a call by referecnce, bool pointer which represents wheather the game needs 
+///		to be reset
+/// </param>
+/// <returns>
+///		the function returns true when the piece cannot move anymore
+/// </returns>
 bool Stack::Update(bool* toRes)
 {
-	int score;
 	if (StackColl())
 	{
 		*toRes = true;
@@ -87,7 +101,12 @@ bool Stack::Update(bool* toRes)
 	return false;
 }
 
-
+/// <summary>
+///		a draw function, draw
+/// </summary>
+/// <param name="window">
+///		
+/// </param>
 void Stack::Draw(sf::RenderWindow& window)
 {
 	for (int i = 0; i < STACKH; i++)
@@ -97,7 +116,6 @@ void Stack::Draw(sf::RenderWindow& window)
 			window.draw(board[i][j]->spr);
 		}
 	}
-	// curpiece->DrawP(window);
 	curpiece->DrawT(window);
 	Qpieces.front()->DrawT(window);
 	if (toggleShadow)
@@ -110,6 +128,9 @@ void Stack::Draw(sf::RenderWindow& window)
 	}
 }
 
+/// <summary>
+///		a function that switches the current piece using the queue
+/// </summary>
 void Stack::SwitchPiece()
 {
 	delete curpiece;
@@ -127,6 +148,9 @@ void Stack::SwitchPiece()
 	didInsertToHold = false;
 }
 
+/// <summary>
+///		a function that generates a queue for the next 5 pieces.
+/// </summary>
 void Stack::GeneratepiecesQueue()
 {
 	for (int i = 0; i < PIECELIST; i++) // generating list
@@ -136,6 +160,11 @@ void Stack::GeneratepiecesQueue()
 	}
 }
 
+
+/// <summary>
+///		a function that sets the current piece in the stack after the
+/// </summary>
+/// <returns></returns>
 int Stack::CopyPeiceToStack()
 {
 	int x, y;
@@ -162,6 +191,34 @@ int Stack::CopyPeiceToStack()
 	return y;
 }
 
+
+/// <summary>
+///		
+/// </summary>
+/// <param name="right">
+///		
+///	</param>
+/// <param name="left">
+///		
+/// </param>
+/// <param name="RotR">
+///		
+///	</param>
+/// <param name="RotL">
+///		
+/// </param>
+/// <param name="tochange">
+///		
+/// </param>
+/// <param name="dropp">
+///		
+///	</param>
+/// <param name="fasterdown">
+///		
+///	</param>
+/// <param name="hold">
+///		
+/// </param>
 void Stack::GameLogic(bool right, bool left, bool RotR,
 	bool RotL, bool tochange, bool dropp, bool fasterdown, bool hold)
 {
@@ -326,6 +383,13 @@ void Stack::CheckScore(int index)
 	}
 }
 
+
+/// <summary>
+///		handles two situations:
+///			1. when there's a held piece it checks whether the holding logic is currect
+///			and if it is currect it switches the pieces
+///			2. when there's no held piece it just places the piece in hold
+/// </summary>
 void Stack::Hold()
 {
 	if (isHolding)
@@ -349,11 +413,17 @@ void Stack::Hold()
 	didInsertToHold = true;
 }
 
+
+/// <summary>
+///		uses existing logic from the update and the buffer methods to set 
+///		a shadow for the piece
+/// </summary>
 void Stack::SetShadow()
 {
 	CopyPieceFunc(buff::PIECETOSHADOW);
 	bool* FaketoRes = (bool*)malloc(sizeof(bool));
-	*FaketoRes = false;
+	if (FaketoRes != NULL)
+		*FaketoRes = false;
 	bool dropping = true;
 	while (dropping)
 	{
