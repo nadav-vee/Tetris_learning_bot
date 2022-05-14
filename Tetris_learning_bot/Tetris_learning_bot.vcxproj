@@ -176,6 +176,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AI.cpp" />
+    <ClCompile Include="AIEvaluatorComponent.cpp" />
+    <ClCompile Include="AIEvaluatorSystem.cpp" />
+    <ClCompile Include="AIEvaluatorUtil.cpp" />
     <ClCompile Include="AIGame.cpp" />
     <ClCompile Include="AIHeuristic.cpp" />
     <ClCompile Include="AIprocessing.cpp" />
@@ -188,6 +191,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AI.h" />
+    <ClInclude Include="AICommon.h" />
+    <ClInclude Include="AIEvaluatorComponent.h" />
+    <ClInclude Include="AIEvaluatorSystem.h" />
+    <ClInclude Include="AIEvaluatorUtil.h" />
     <ClInclude Include="AIGame.h" />
     <ClInclude Include="AIHeuristic.h" />
     <ClInclude Include="AIprocessing.h" />
@@ -199,15 +206,15 @@
     <ClInclude Include="UserGame.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="blue.png" />
-    <Image Include="green.png" />
-    <Image Include="grey.png" />
-    <Image Include="orange.png" />
-    <Image Include="pink.png" />
-    <Image Include="purple.png" />
-    <Image Include="red.png" />
-    <Image Include="shadow.png" />
-    <Image Include="yellow.png" />
+    <Image Include="assets\blue.png" />
+    <Image Include="assets\green.png" />
+    <Image Include="assets\grey.png" />
+    <Image Include="assets\orange.png" />
+    <Image Include="assets\pink.png" />
+    <Image Include="assets\purple.png" />
+    <Image Include="assets\red.png" />
+    <Image Include="assets\shadow.png" />
+    <Image Include="assets\yellow.png" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="font.ttf" />

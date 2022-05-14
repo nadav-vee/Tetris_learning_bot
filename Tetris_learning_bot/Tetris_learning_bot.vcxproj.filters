@@ -45,6 +45,15 @@
     <ClCompile Include="AIHeuristic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AIEvaluatorComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AIEvaluatorSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AIEvaluatorUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UserGame.h">
@@ -77,33 +86,45 @@
     <ClInclude Include="AIHeuristic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AIEvaluatorSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AIEvaluatorComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AICommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AIEvaluatorUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="blue.png">
+    <Image Include="assets\blue.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="green.png">
+    <Image Include="assets\green.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="grey.png">
+    <Image Include="assets\grey.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="orange.png">
+    <Image Include="assets\orange.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="pink.png">
+    <Image Include="assets\pink.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="purple.png">
+    <Image Include="assets\purple.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="red.png">
+    <Image Include="assets\red.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="shadow.png">
+    <Image Include="assets\shadow.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="yellow.png">
+    <Image Include="assets\yellow.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

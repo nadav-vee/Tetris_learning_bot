@@ -41,6 +41,7 @@ void UserGame::Start()
 	bool canPressUp = true;
 
 	// general game variables
+	bool notpaused = true;
 	bool* restart = (bool*)malloc(sizeof(bool));
 	*restart = false;
 
@@ -73,21 +74,18 @@ void UserGame::Start()
 
 	// Design variables:
 	sf::RectangleShape* upperHoldLine = new sf::RectangleShape(
-		sf::Vector2f(PLW*2,5));
-	upperHoldLine->setPosition(sf::Vector2f(W - PLW*2, H - (PLW*1.5 + BUFF)));
+		sf::Vector2f(PLW * 2, 5));
+	upperHoldLine->setPosition(sf::Vector2f(W - PLW * 2, H - (PLW * 1.5 + BUFF)));
 	upperHoldLine->setFillColor(sf::Color::Green);
 
 
 	while (window.isOpen())
 	{
 		dtCounter = clock.restart().asSeconds();
-		dtUpdate += dtCounter;
-		dtMov += dtCounter;
-		dtRot += dtCounter;
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
-			if (event.type == sf::Event::Closed || 
+			if (event.type == sf::Event::Closed ||
 				(event.type == sf::Event::KeyPressed &&
 					event.key.code == sf::Keyboard::Escape))
 				window.close();
@@ -95,6 +93,11 @@ void UserGame::Start()
 				&& event.key.code == sf::Keyboard::Space)
 			{
 				canPressSpace = true;
+			}
+			if (event.type == sf::Event::KeyReleased
+				&& event.key.code == sf::Keyboard::D)
+			{
+				*restart = true;
 			}
 			if (event.type == sf::Event::KeyReleased
 				&& event.key.code == sf::Keyboard::Up)
@@ -121,83 +124,94 @@ void UserGame::Start()
 			{
 				canPressRShift = true;
 			}
-		}
+			if (event.type == sf::Event::KeyReleased
+				&& event.key.code == sf::Keyboard::P)
+			{
+				notpaused = (notpaused) ? false : true;
+			}
 
+		}
 		window.clear();
 
-		if (dtMov >= 0.150f)
+		if (notpaused)
 		{
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+			dtUpdate += dtCounter;
+			dtMov += dtCounter;
+			dtRot += dtCounter;
+
+			if (dtMov >= 0.150f)
 			{
-				right = true;
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+				{
+					right = true;
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+				{
+					left = true;
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+				{
+					fasterdown = true;
+					dtUpdate = 0;
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+				{
+					TmpChgPceMthd = true;
+				}
+				dtMov = 0;
 			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && canPressSpace)
 			{
-				left = true;
+				dropp = true;
+				canPressSpace = false;
 			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && canPressUp)
 			{
-				fasterdown = true;
+				hold = true;
+				canPressUp = false;
+			}
+
+			if (dtRot >= 0.160f)
+			{
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return) && canPressReturn)
+				{
+					torotL = true;
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::RShift) && canPressRShift)
+				{
+					torotR = true;
+				}
+				dtRot = 0;
+			}
+
+			s->GameLogic(right, left, torotR, torotL, TmpChgPceMthd, dropp, fasterdown, hold);
+			left = false;
+			right = false;
+			TmpChgPceMthd = false;
+			torotL = false;
+			torotR = false;
+			dropp = false;
+			fasterdown = false;
+			hold = false;
+
+			if (dtUpdate >= 0.900f)
+			{
+
+				s->Update(restart);
+				string sco = "Score = ";
+				sco += std::to_string(s->Score);
+				Score.setString(sco);
+				if (s->Score > HighScore)
+				{
+					HighScore = s->Score;
+				}
+				sco = "High Score = ";
+				sco += to_string(HighScore);
+				highscoreTX.setString(sco);
 				dtUpdate = 0;
 			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
-			{
-				TmpChgPceMthd = true;
-			}
-			dtMov = 0;
 		}
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && canPressSpace)
-		{
-			dropp = true;
-			canPressSpace = false;
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && canPressUp)
-		{
-			hold = true;
-			canPressUp = false;
-		}
-
-		if (dtRot >= 0.160f)
-		{
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return) && canPressReturn)
-			{
-				torotL = true;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::RShift) && canPressRShift)
-			{
-				torotR = true;
-			}
-			dtRot = 0;
-		}
-
-		s->GameLogic(right, left, torotR, torotL, TmpChgPceMthd, dropp, fasterdown, hold);
-		left = false;
-		right = false;
-		TmpChgPceMthd = false;
-		torotL = false;
-		torotR = false;
-		dropp = false;
-		fasterdown = false;
-		hold = false;
-
-		if (dtUpdate >= 0.900f)
-		{
-
-			s->Update(restart);
-			string sco = "Score = ";
-			sco += std::to_string(s->Score);
-			Score.setString(sco);
-			if (s->Score > HighScore)
-			{
-				HighScore = s->Score;
-			}
-			sco = "High Score = ";
-			sco += to_string(HighScore);
-			highscoreTX.setString(sco);
-			dtUpdate = 0;
-		}
-
 		s->Draw(window);
 
 		window.draw(Score);
@@ -243,7 +257,6 @@ void UserGame::Start()
 				{
 					if (eventt.type == sf::Event::Closed)
 						windowyoulost.close();
-					/**/
 					if (eventt.type == sf::Event::KeyPressed
 						&& eventt.key.code == sf::Keyboard::Space)
 					{
@@ -253,12 +266,6 @@ void UserGame::Start()
 				}
 
 				windowyoulost.clear();
-
-				//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-				//{
-				//	windowyoulost.close();
-				//	dtRot -= 0.200;
-				//}
 
 				windowyoulost.draw(LosingMessage);
 

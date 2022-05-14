@@ -29,28 +29,8 @@
 //	virtual float GetScore(const Stack* original, Stack* tetrisBoard);
 //};
 //
-//class AIHeuristic_HighestCol : public AIHeuristic
-//{
-//public:
-//	using AIHeuristic::AIHeuristic;
-//	virtual float GetScore(const Stack* original, Stack* tetrisBoard);
-//};
-//
-//class AIHeuristic_DeepestHole : public AIHeuristic
-//{
-//public:
-//	using AIHeuristic::AIHeuristic;
-//	virtual float GetScore(const Stack* original, Stack* tetrisBoard);
-//};
 //
 //class AIHeuristic_GameLoss : public AIHeuristic
-//{
-//public:
-//	using AIHeuristic::AIHeuristic;
-//	virtual float GetScore(const Stack* original, Stack* tetrisBoard);
-//};
-//
-//class AIHeuristic_CompletedLines : public AIHeuristic
 //{
 //public:
 //	using AIHeuristic::AIHeuristic;
@@ -61,7 +41,7 @@
 //{
 //public:
 //	using AIHeuristic::AIHeuristic;
-//	virtual float GetScore(const Tetris* original, Tetris* tetrisBoard);
+//	virtual float GetScore(const Stack* original, Tetris* tetrisBoard);
 //};
 //
 //

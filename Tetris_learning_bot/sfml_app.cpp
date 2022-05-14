@@ -4,7 +4,7 @@
 
 int main()
 {
-    srand(time(NULL));
+    srand(unsigned int(time(NULL)));
     UserGame* u = new UserGame();
     u->Start();
 

@@ -85,6 +85,7 @@ public:
 	bool Combo = false;
 	Cell* board[STACKH][STACKW];
 	std::queue<Piece*> Qpieces;
+	ColorsType curColor;
 
 private:
 	Piece* NewPiece(ColorsType rp);

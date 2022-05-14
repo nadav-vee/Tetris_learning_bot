@@ -26,7 +26,8 @@ sf::Texture& AssetManager::GetTexture(std::string const& filename)
 	{
 		// Create an element in the texture map
 		auto& texture = texMap[filename];
-		texture.loadFromFile(filename);
+		if (!texture.loadFromFile(filename))
+			printf("error loading files");
 		return texture;
 	}
 }

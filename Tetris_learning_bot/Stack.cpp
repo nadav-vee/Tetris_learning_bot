@@ -23,11 +23,11 @@ Stack::Stack()
 		}
 	} // Stack init
 
-	ColorsType initcolor = rs();
-	curpiece = new Piece(initcolor);
+	curColor = rs();
+	curpiece = new Piece(curColor);
 	curpiece->SetStartingPos();
-	curpieceBuffer = new Piece(initcolor);
-	shadow = new Piece(initcolor);
+	curpieceBuffer = new Piece(curColor);
+	shadow = new Piece(curColor);
 	shadow->Shadow();
 	CopyPieceFunc(buff::PIECETOBUFF);
 
@@ -139,10 +139,10 @@ void Stack::SwitchPiece()
 	Qpieces.push(NewPiece(rs())); // rs = random shape
 	Qpieces.front()->MoveT(-7);
 	curpiece = Qpieces.front();
-	ColorsType buffcolor = curpiece->getColorPiece();
-	curpieceBuffer = new Piece(buffcolor);
+	curColor = curpiece->getColorPiece();
+	curpieceBuffer = new Piece(curColor);
 	CopyPieceFunc(buff::PIECETOBUFF);
-	shadow = new Piece(buffcolor);
+	shadow = new Piece(curColor);
 	SetShadow();
 	Qpieces.pop();
 	didInsertToHold = false;
@@ -625,6 +625,7 @@ Piece* Stack::NewPiece(ColorsType rp)
 
 void Stack::CopyPieceFunc(enum buff buf)
 {
+	curColor = curpiece->getColorPiece();
 	switch (buf)
 	{
 	case BUFFTOPIECE:
@@ -650,7 +651,7 @@ void Stack::CopyPieceFunc(enum buff buf)
 	case PIECETOHELD:
 		for (int i = 0; i < PIECESIZE; i++)
 		{
-			held ->setColorPiece(curpiece->getColorPiece());
+			held->setColorPiece(curColor);
 			held->tetromino[i]->spr = curpiece->tetromino[i]->spr;
 			held->tetromino[i]->val = curpiece->tetromino[i]->val;
 			held->tetromino[i]->x = curpiece->tetromino[i]->x;
@@ -678,15 +679,41 @@ void Stack::CopyPieceFunc(enum buff buf)
 		}
 		break;
 	case PIECETOSHADOW:
+		auto shadowtex = NOpiece;
+		switch (curColor)
+		{
+		case BLUE:
+			shadowtex = SHADOWIpiece;
+			break;
+		case GREEN:
+			shadowtex = SHADOWSpiece;
+			break;
+		case ORANGE:
+			shadowtex = SHADOWLpiece;
+			break;
+		case PINK:
+			shadowtex = SHADOWJpiece;
+			break;
+		case PURPLE:
+			shadowtex = SHADOWTpiece;
+			break;
+		case RED:
+			shadowtex = SHADOWZpiece;
+			break;
+		case YELLOW:
+			shadowtex = SHADOWOpiece;
+			break;
+		default:
+			shadowtex = Shadowpiece;
+			break;
+		}
 		for (int i = 0; i < PIECESIZE; i++)
 		{
 			shadow->tetromino[i]->val = curpiece->tetromino[i]->val;
 			shadow->tetromino[i]->x = curpiece->tetromino[i]->x;
 			shadow->tetromino[i]->y = curpiece->tetromino[i]->y;
-			shadow->tetromino[i]->SetTex(Shadowpiece);
+			shadow->tetromino[i]->SetTex(shadowtex);
 		}
-		break;
-	default:
 		break;
 	}
 }
