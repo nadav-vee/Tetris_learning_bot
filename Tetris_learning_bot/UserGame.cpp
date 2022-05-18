@@ -12,7 +12,7 @@ void UserGame::Start()
 {
 	// game logic
 	// change constants
-	AssetManager manager;
+	// AssetManager manager;
 	Stack* s = new Stack();
 	sf::RenderWindow window(sf::VideoMode(W, H), "TETRIS!");
 	sf::Clock clock;

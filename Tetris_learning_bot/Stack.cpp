@@ -615,6 +615,35 @@ bool Stack::CheckTetris(int index)
 	return Tet;
 }
 
+void Stack::Move(int x)
+{
+	curpiece->MoveT(x);
+}
+
+void Stack::RotateL()
+{
+	curpiece->RotateTL();
+}
+
+void Stack::RotateR()
+{
+	curpiece->RotateTR();
+}
+
+void Stack::Drop()
+{
+	bool *FakeToRes;
+	toggleShadow = false;
+	bool dropping = true;
+	while (dropping)
+	{
+		if (Update(FakeToRes))
+		{
+			dropping = false;
+		}
+	}
+}
+
 Piece* Stack::NewPiece(ColorsType rp)
 {
 	Piece* tmpP = new Piece(rp);

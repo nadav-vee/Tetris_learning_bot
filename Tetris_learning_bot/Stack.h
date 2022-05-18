@@ -76,6 +76,7 @@ public:
 	void SwitchPiece();
 	void GeneratepiecesQueue();
 	void CopyPieceFunc(enum buff buf);
+
 	Piece* curpiece;
 	Piece* curpieceBuffer;
 	Piece* held;
@@ -86,6 +87,12 @@ public:
 	Cell* board[STACKH][STACKW];
 	std::queue<Piece*> Qpieces;
 	ColorsType curColor;
+
+	// ai control logic:
+	void Move(int x);
+	void RotateL();
+	void RotateR();
+	void Drop();
 
 private:
 	Piece* NewPiece(ColorsType rp);

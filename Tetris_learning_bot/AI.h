@@ -1,18 +1,55 @@
 #pragma once
 #include "Stack.h"
+#include "AIEvaluatorSystem.h"
 
 class AI
 {
 public:
 	AI();
-	
-	Stack* GetState();
+	~AI();
+	void InitAI(float flUpdateFrequency, sf::Vector2f aiHeuristicRange);
+	void Quit();
 	void Calc_Best_Outcome();
 	void Update();
-	void Start();
-	void Learn();
+	void FindBestMove();
+	DesiredMoveSet __FindBestMove(Stack* tetrisBoard, int lookaheads, bool holdPiece);
+
 private:
-	Stack* CurState;
+	struct SpawnInfo
+	{
+		float updateFrequency;
+		sf::Vector2f aiHeursticRange;
+		sf::Vector2f spawnPos;
+		sf::Vector2f spawnScale;
+
+		SpawnInfo()
+			: updateFrequency(00)
+			, spawnPos(0, 0)
+			, spawnScale(1, 1)
+			, aiHeursticRange(1.0f, 1.0f)
+		{
+
+		}
+	};
+
+	sf::Vector2f m_aiSpawnPos;
+	float m_flScale;
+	float m_flXOffset;
+	float m_flYOffset;
+
+	bool CanFindMove() { return m_timeSinceLastUpdate > AI_UPDATE_RATE_SECONDS; }
+	DesiredMoveSet GetBestMove() { return m_bestMoves[0]; }
+	bool m_initialized;
+	sf::Vector2f m_aiHeuristicRange;
+	std::vector<AIHeuristic*> m_heuristics;
+	std::vector<AIDebugHeuristic> m_debugHeuristics;
+	DesiredMoveSet m_bestMoves[NUM_LOOKAHEAD];
+	DesiredMoveSet m_currentMove;
+	Stack* current;
+	float m_timeSinceLastUpdate;
+	float m_timeUntilUpdate;
+	float m_updateFrequency;
+	AIEvaluatorSystem* curSys;
 };
 
 

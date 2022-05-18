@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
+#include <string>
 
 #define PIECESIZE		4						// the amount of cells in a piece
 #define SMALLPIECESIZE	3

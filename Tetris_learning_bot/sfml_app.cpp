@@ -5,6 +5,7 @@
 int main()
 {
     srand(unsigned int(time(NULL)));
+    // AssetManager manager;
     UserGame* u = new UserGame();
     u->Start();
 

@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\systems">
+      <UniqueIdentifier>{1d3a29b0-c8c2-4936-b3cb-acee0f7cc178}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\systems">
+      <UniqueIdentifier>{ee04a3a0-dbed-4d24-a414-57e587416d95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\component">
+      <UniqueIdentifier>{a05eef37-d91a-488f-a590-9e8bb77da090}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\component">
+      <UniqueIdentifier>{ca6f150b-9625-4fbe-bbe5-34bd7d6e6224}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sfml_app.cpp">
@@ -45,14 +57,29 @@
     <ClCompile Include="AIHeuristic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AIEvaluatorComponent.cpp">
+    <ClCompile Include="AIEvaluatorUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AIEvaluatorSystem.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\systems</Filter>
     </ClCompile>
-    <ClCompile Include="AIEvaluatorUtil.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="AIMoveSystem.cpp">
+      <Filter>Source Files\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="AISpawnSystem.cpp">
+      <Filter>Source Files\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="AIControllerSystem.cpp">
+      <Filter>Source Files\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="AIEvaluatorComponent.cpp">
+      <Filter>Source Files\component</Filter>
+    </ClCompile>
+    <ClCompile Include="AISpawnComponent.cpp">
+      <Filter>Source Files\component</Filter>
+    </ClCompile>
+    <ClCompile Include="AIControllerComponent.cpp">
+      <Filter>Source Files\component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -86,17 +113,32 @@
     <ClInclude Include="AIHeuristic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AIEvaluatorSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AIEvaluatorComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AICommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AIEvaluatorUtil.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AIEvaluatorSystem.h">
+      <Filter>Header Files\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="AIMoveSystem.h">
+      <Filter>Header Files\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="AIControllerSystem.h">
+      <Filter>Header Files\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="AISpawnSystem.h">
+      <Filter>Header Files\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="AIEvaluatorComponent.h">
+      <Filter>Header Files\component</Filter>
+    </ClInclude>
+    <ClInclude Include="AISpawnComponent.h">
+      <Filter>Header Files\component</Filter>
+    </ClInclude>
+    <ClInclude Include="AIControllerComponent.h">
+      <Filter>Header Files\component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
