@@ -3,8 +3,6 @@
 #include "Stack.h"
 
 
-#define NUM_LOOKAHEAD (2)
-#define AI_UPDATE_RATE_SECONDS (0.0f)
 
 class AIHeuristic;
 class AIDebugHeuristic;

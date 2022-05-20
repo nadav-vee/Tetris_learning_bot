@@ -1,7 +1,7 @@
 #include "AIHeuristic.h"
 #include "Stack.h"
 
-float AIHeuristic_AggregateHeight::GetScore(Stack* tetrisBoard)
+float AIHeuristic_AggregateHeight::GetScore(Stack* tetrisBoard, Stack* BoardCopy)
 {
 	float result = 0.0f;
 
@@ -20,7 +20,7 @@ float AIHeuristic_AggregateHeight::GetScore(Stack* tetrisBoard)
 	return m_scalar * result;
 }
 
-float AIHeuristic_Holes::GetScore(Stack* tetrisBoard)
+float AIHeuristic_Holes::GetScore(Stack* tetrisBoard, Stack* BoardCopy)
 {
 	float result = 0.0f;
 
@@ -43,7 +43,7 @@ float AIHeuristic_Holes::GetScore(Stack* tetrisBoard)
 	return m_scalar * result;
 }
 
-float AIHeuristic_Bumpiness::GetScore(Stack* tetrisBoard)
+float AIHeuristic_Bumpiness::GetScore(Stack* tetrisBoard, Stack* BoardCopy)
 {
 	float result = 0.0f;
 
@@ -104,17 +104,17 @@ float AIHeuristic_Bumpiness::GetScore(Stack* tetrisBoard)
 //	return m_scalar * result;
 //}
 
-//float AIHeuristic_GameLoss::GetScore(Stack* tetrisBoard)
-//{
-//	float result = 0.0f;
-//	if (tetrisBoard->m_resetCount > original->m_resetCount)
-//	{
-//		result = -100000000;
-//	}
-//	return result;
-//}/////////////////////////////////////////////////////////////////////////////////
+float AIHeuristic_GameLoss::GetScore(Stack* tetrisBoard, Stack* BoardCopy)
+{
+	float result = 0.0f;
+	if (tetrisBoard->resetCount > BoardCopy->resetCount)
+	{
+		result = -100000000;
+	}
+	return result;
+}
 
-float AIHeuristic_Blockade::GetScore(Stack* tetrisBoard)
+float AIHeuristic_Blockade::GetScore(Stack* tetrisBoard, Stack* BoardCopy)
 {
 	float result = 0.0f;
 

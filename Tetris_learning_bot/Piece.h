@@ -21,6 +21,7 @@ public:
     ColorsType getColorPiece();
     void setColorPiece(ColorsType color);
     ////////////////
+    void SetPosition(int x, int y); // Function assumes piece in base position (0,0)
     void SetStartingPos();
     void SetNextPosition();
     void SetHeldPosition();
@@ -34,8 +35,11 @@ public:
     void RotateTL();
     ////////////////
     Cell* tetromino[PIECESIZE];
+    int maxRotations;
+    int Xpos;
 
 private:
+    int GetMinXFromTet();
     void ResetPos();
     int pivot;
     //sf::Vector2i Origin;

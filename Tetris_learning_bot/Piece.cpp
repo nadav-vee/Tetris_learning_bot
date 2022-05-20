@@ -2,17 +2,16 @@
 
 
 Piece::Piece(enum ColorsType piecetype)
+	: maxRotations(4),
+	pivot(1),
+	curPieceColor(piecetype)
 {
-
 	for (int i = 0; i < PIECESIZE; i++)
 	{
 		tetromino[i] = new Cell();
 		tetromino[i]->val = true;
 		//tetromino[i]->y = 0-PLH;
 	}
-	pivot = 1;
-
-	curPieceColor = piecetype;
 	std::string filet;
 	switch (piecetype)
 	{
@@ -23,6 +22,7 @@ Piece::Piece(enum ColorsType piecetype)
 	case ColorsType::BLUE:
 		filet = Ipiece;
 		pivot = 2;
+		maxRotations = 2;
 		tetromino[0]->SetTex(filet);
 		tetromino[1]->SetTex(filet);
 		tetromino[2]->SetTex(filet);
@@ -38,6 +38,7 @@ Piece::Piece(enum ColorsType piecetype)
 		break;
 	case ColorsType::GREEN:
 		filet = Spiece;
+		maxRotations = 2;
 		tetromino[0]->SetTex(filet);
 		tetromino[1]->SetTex(filet);
 		tetromino[2]->SetTex(filet);
@@ -98,6 +99,7 @@ Piece::Piece(enum ColorsType piecetype)
 		break;
 	case ColorsType::RED:
 		filet = Zpiece;
+		maxRotations = 2;
 		tetromino[0]->SetTex(filet);
 		tetromino[1]->SetTex(filet);
 		tetromino[2]->SetTex(filet);
@@ -114,6 +116,7 @@ Piece::Piece(enum ColorsType piecetype)
 	case ColorsType::YELLOW:
 		pivot = -1;
 		filet = Opiece;
+		maxRotations = 1;
 		tetromino[0]->SetTex(filet);
 		tetromino[1]->SetTex(filet);
 		tetromino[2]->SetTex(filet);
@@ -157,10 +160,21 @@ void Piece::setColorPiece(ColorsType color)
 	curPieceColor = color;
 }
 
+void Piece::SetPosition(int x, int y)
+{
+	MoveT(x);
+	for (int i = 0; i < (y + 4); i++)
+	{
+		MoveTdown();
+	}
+	Xpos = GetMinXFromTet();
+}
+
 void Piece::SetStartingPos()
 {
 	ResetPos();
 	MoveT(STARTINGXVAL);
+	Xpos = GetMinXFromTet();
 }
 
 void Piece::SetNextPosition()
@@ -168,6 +182,7 @@ void Piece::SetNextPosition()
 	ResetPos();
 	MoveT(NEXTPXVAL);
 	MoveTdown();
+	Xpos = GetMinXFromTet();
 }
 
 void Piece::SetHeldPosition()
@@ -180,6 +195,16 @@ void Piece::SetHeldPosition()
 	UpdateTetrominoPos();
 }
 
+int Piece::GetMinXFromTet()
+{
+	int x = INT_MAX;
+	for (int i = 0; i < PIECESIZE; i++)
+	{
+		if (x < tetromino[i]->x) x = tetromino[i]->x;
+	}
+	return x;
+}
+
 void Piece::ResetPos()
 {
 	switch (curPieceColor)
@@ -189,13 +214,13 @@ void Piece::ResetPos()
 	case ColorsType::GREY:
 		break;
 	case ColorsType::BLUE:
-		tetromino[0]->x = 1;	// the blue I piece
+		tetromino[0]->x = 0;	// the blue I piece
 		tetromino[0]->y = 0;	// 
-		tetromino[1]->x = 1;	// 0 1 0 0
-		tetromino[1]->y = 1;	// 0 1 0 0
-		tetromino[2]->x = 1;	// 0 1 0 0
-		tetromino[2]->y = 2;	// 0 1 0 0
-		tetromino[3]->x = 1;	//
+		tetromino[1]->x = 0;	// 1 0 0 0
+		tetromino[1]->y = 1;	// 1 0 0 0
+		tetromino[2]->x = 0;	// 1 0 0 0 
+		tetromino[2]->y = 2;	// 1 0 0 0
+		tetromino[3]->x = 0;	//
 		tetromino[3]->y = 3;	//
 		break;
 	case ColorsType::GREEN:
@@ -249,14 +274,14 @@ void Piece::ResetPos()
 		tetromino[3]->y = 1;	//
 		break;
 	case ColorsType::YELLOW:
-		tetromino[0]->x = 1;	// the yellow O piece
-		tetromino[0]->y = 1;	// 
-		tetromino[1]->x = 2;	// 0 0 0 0
-		tetromino[1]->y = 1;	// 0 1 1 0
-		tetromino[2]->x = 1;	// 0 1 1 0
-		tetromino[2]->y = 2;	// 0 0 0 0
-		tetromino[3]->x = 2;	//
-		tetromino[3]->y = 2;	//
+		tetromino[0]->x = 0;	// the yellow O piece
+		tetromino[0]->y = 0;	// 
+		tetromino[1]->x = 1;	// 
+		tetromino[1]->y = 0;	// 1 1 0 0
+		tetromino[2]->x = 0;	// 1 1 0 0
+		tetromino[2]->y = 1;	// 0 0 0 0
+		tetromino[3]->x = 1;	// 0 0 0 0
+		tetromino[3]->y = 1;	//
 		break;
 	}
 	for (int i = 0; i < 4; i++)
@@ -283,6 +308,7 @@ void Piece::UpdateTetrominoPos()
 		y = tetromino[i]->y;
 		tetromino[i]->SetPosInd(y, x);
 	}
+	Xpos = GetMinXFromTet();
 }
 
 void Piece::MoveT(int dir)

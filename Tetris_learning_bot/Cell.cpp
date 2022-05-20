@@ -1,6 +1,6 @@
 #include "Cell.h"
 
-Cell::Cell()
+Cell::Cell() : colorFileName(NOpiece)
 {
 	x = 0;
 	y = 0;
@@ -14,7 +14,9 @@ void Cell::SetTex(std::string const& filename)
 	if (val == true)
 	{
 		spr.setTexture(AssetManager::GetTexture(filename));
+		colorFileName = filename;
 	}
+	else
 }
 
 void Cell::SetPosInd(int i, int j) // height, width

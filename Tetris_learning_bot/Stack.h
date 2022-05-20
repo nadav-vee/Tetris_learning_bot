@@ -86,13 +86,17 @@ public:
 	bool Combo = false;
 	Cell* board[STACKH][STACKW];
 	std::queue<Piece*> Qpieces;
-	ColorsType curColor;
+	ColorsType Color;
 
 	// ai control logic:
 	void Move(int x);
 	void RotateL();
 	void RotateR();
 	void Drop();
+	Stack* CloneStack();
+	void ResetcurpiecePosition();
+	int GetMaximumSetXPos();
+	int resetCount;
 
 private:
 	Piece* NewPiece(ColorsType rp);
@@ -101,6 +105,7 @@ private:
 	bool ShadowStackColl();
 	bool ShadowBlocksColl();
 	bool ShadowBottomColl();
+	bool CeilingColl();
 	bool CheckToDel(int index);
 	void DeleteLine(int index);
 	bool CheckTetris(int index);

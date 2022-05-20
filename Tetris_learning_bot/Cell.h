@@ -7,6 +7,7 @@ public:
 	int y;
 	bool val;
 	sf::Sprite spr;
+	std::string colorFileName;
 	Cell();
 	void SetTex(std::string const& filename);
 	void SetPosInd(int i, int j);// height, width

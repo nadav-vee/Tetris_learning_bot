@@ -1,6 +1,7 @@
 #pragma once
 #include "Stack.h"
-#include "AIEvaluatorSystem.h"
+#include "AIHeuristic.h"
+#include "AICommon.h"
 
 class AI
 {
@@ -13,8 +14,11 @@ public:
 	void Update();
 	void FindBestMove();
 	DesiredMoveSet __FindBestMove(Stack* tetrisBoard, int lookaheads, bool holdPiece);
+	
+	void SetUpdateFrequency(float time);
+	void SetCurrentMove(DesiredMoveSet& move);
+	bool NeedsNewMove();
 
-private:
 	struct SpawnInfo
 	{
 		float updateFrequency;
@@ -38,18 +42,18 @@ private:
 	float m_flYOffset;
 
 	bool CanFindMove() { return m_timeSinceLastUpdate > AI_UPDATE_RATE_SECONDS; }
-	DesiredMoveSet GetBestMove() { return m_bestMoves[0]; }
+	DesiredMoveSet GetBestMove();
 	bool m_initialized;
 	sf::Vector2f m_aiHeuristicRange;
 	std::vector<AIHeuristic*> m_heuristics;
 	std::vector<AIDebugHeuristic> m_debugHeuristics;
 	DesiredMoveSet m_bestMoves[NUM_LOOKAHEAD];
 	DesiredMoveSet m_currentMove;
-	Stack* current;
+	Stack* tetris;
 	float m_timeSinceLastUpdate;
 	float m_timeUntilUpdate;
 	float m_updateFrequency;
-	AIEvaluatorSystem* curSys;
+	/*AIEvaluatorSystem* curSys;*/
 };
 
 

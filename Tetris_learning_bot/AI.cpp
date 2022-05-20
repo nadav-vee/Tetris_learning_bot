@@ -6,7 +6,7 @@ AI::AI()
 	, m_aiSpawnPos(0, 0)
 {
 
-	current = new Stack();
+	tetris = new Stack();
 	m_currentMove.used = true; // controller comp
 
 	m_aiSpawnPos.x = BW; // spawn comp
@@ -21,13 +21,13 @@ AI::AI()
 
 void AI::FindBestMove()
 {
-	if (current)
+	if (tetris)
 	{
 		m_timeSinceLastUpdate = 0.0f;
 
 		// Stop AI when game is lost
-		m_bestMoves[0] = __FindBestMove(current, NUM_LOOKAHEAD, false);
-		DesiredMoveSet heldMove = __FindBestMove(current, NUM_LOOKAHEAD, true);
+		m_bestMoves[0] = __FindBestMove(tetris, NUM_LOOKAHEAD, false);
+		DesiredMoveSet heldMove = __FindBestMove(tetris, NUM_LOOKAHEAD, true);
 
 		if (heldMove.score > m_bestMoves[0].score)
 		{
@@ -42,7 +42,7 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 
 	numLookaheads--;
 
-	if (!current->curpiece)
+	if (!tetris->curpiece)
 	{
 		return result;
 	}
@@ -50,44 +50,48 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 	for (int i = 0; i < STACKW; i++)
 	{
 		// Try all rotations	
-		int rotations = tetrisBoard->m_currentPiece->MaxRotations();
+		int rotations = tetrisBoard->curpiece->maxRotations;
 		for (int j = 0; j < rotations; j++)
 		{
 			// Make a copy of the board
-			Tetris boardCopy;
-			boardCopy.Clone(tetrisBoard);
+			Stack* boardCopy = tetrisBoard->CloneStack();
 
 			if (holdPiece)
 			{
-				boardCopy.KeySwap();
+				boardCopy->Hold();
 				result.swapPiece = true;
 			}
 
 			for (int numRotations = 0; numRotations < j; numRotations++)
 			{
-				boardCopy.m_currentPiece->Rotate(true);
+				boardCopy->curpiece->RotateTR();
 			}
-			boardCopy.m_currentPiece->Move(-tetrisBoard->m_cols, 0);
-			boardCopy.m_currentPiece->Move(i, 0);
-			int colIdx = (int)boardCopy.m_currentPiece->m_originColIdx;
-			boardCopy.DropCurrentPiece();
+			boardCopy->ResetcurpiecePosition();
+			boardCopy->curpiece->SetPosition(i, 0);
+			int colIdx = INT_MAX;
+			for (int i = 0; i < PIECESIZE; i++)
+			{
+				if (colIdx > tetrisBoard->curpiece->tetromino[i]->x)
+					colIdx = tetrisBoard->curpiece->tetromino[i]->x;
+			}
+			boardCopy->Drop();
 
 			// Try the current piece in a specific position
 			// Try the next piece in a specific position	
 
 			// Try the next lookahead
 			float currentScore = 0.0f;
-			for (auto h : ownerComp->m_heuristics)
+			for (auto h : m_heuristics)
 			{
 				// Score the grid	
-				float score = h->GetScore(ownerComp->m_owner, &boardCopy);
+				float score = h->GetScore(tetrisBoard, boardCopy);
 				currentScore += score;
 			}
 
 			DesiredMoveSet lookaheadMove;
 			if (numLookaheads > 0)
 			{
-				lookaheadMove = __FindBestMove(&boardCopy, ownerComp, numLookaheads, false);
+				lookaheadMove = __FindBestMove(boardCopy, numLookaheads, false);
 				currentScore += lookaheadMove.score;
 			}
 
@@ -96,27 +100,49 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 				result.score = currentScore;
 				result.numRotations = j;
 				result.col = colIdx;
-				result.id = ownerComp->m_owner->m_currentPiece->m_id;
 
 				int index = 0;
 
-				for (auto h : ownerComp->m_heuristics)
+				for (auto h : m_heuristics)
 				{
 					if (numLookaheads == NUM_LOOKAHEAD - 1)
 					{
-						float score = h->GetScore(ownerComp->m_owner, &boardCopy);
-						ownerComp->m_debugHeuristics[index].m_lastScore = score;
+						float score = h->GetScore(tetrisBoard, boardCopy);
+						m_debugHeuristics[index].m_lastScore = score;
 					}
 					index++;
 				}
 
 				if (numLookaheads > 0)
 				{
-					ownerComp->m_bestMoves[NUM_LOOKAHEAD - numLookaheads] = lookaheadMove;
+					m_bestMoves[NUM_LOOKAHEAD - numLookaheads] = lookaheadMove;
 				}
 			}
 		}
 	}
 
 	return result;
+}
+
+void AI::SetUpdateFrequency(float time)
+{
+	m_updateFrequency = time;
+}
+
+void AI::SetCurrentMove(DesiredMoveSet& move)
+{
+	if (move.id != m_currentMove.id)
+	{
+		m_currentMove = move;
+	}
+}
+
+bool AI::NeedsNewMove()
+{
+	return m_currentMove.used;
+}
+
+DesiredMoveSet AI::GetBestMove()
+{
+	return m_bestMoves[0];
 }
