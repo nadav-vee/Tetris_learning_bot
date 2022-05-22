@@ -12,10 +12,6 @@ AI::AI()
 	m_aiSpawnPos.x = BW; // spawn comp
 	m_aiSpawnPos.y = 0;
 
-	m_flScale = 0.5f;
-	m_flXOffset = BW * m_flScale;
-	m_flYOffset = BH * m_flScale + 50;
-
 	m_timeSinceLastUpdate = 0.0f + rand() / (float)RAND_MAX; // eval comp
 }
 
@@ -100,6 +96,7 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 				result.score = currentScore;
 				result.numRotations = j;
 				result.col = colIdx;
+				result.used = false;
 
 				int index = 0;
 
@@ -118,9 +115,9 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 					m_bestMoves[NUM_LOOKAHEAD - numLookaheads] = lookaheadMove;
 				}
 			}
+			delete boardCopy;
 		}
 	}
-
 	return result;
 }
 

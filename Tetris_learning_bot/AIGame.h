@@ -7,7 +7,7 @@ public:
 	AIGame();
 	void Start();
 	void Update(float dt);
-	void Draw(sf::RenderWindow* window, float dt);
+	void Draw(sf::RenderWindow& window, float dt);
 	
 private:
 	sf::RenderWindow* window;

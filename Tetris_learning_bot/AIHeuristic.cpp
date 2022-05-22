@@ -9,7 +9,7 @@ float AIHeuristic_AggregateHeight::GetScore(Stack* tetrisBoard, Stack* BoardCopy
 	{
 		for (int j = 0; j < STACKH; j++)
 		{
-			if (tetrisBoard->board[i][j]->val)
+			if (BoardCopy->board[i][j]->val)
 			{
 				result += STACKH - j;
 				break;
@@ -29,7 +29,7 @@ float AIHeuristic_Holes::GetScore(Stack* tetrisBoard, Stack* BoardCopy)
 		bool bFoundBlock = false;
 		for (int j = 0; j < STACKH; j++)
 		{
-			if (tetrisBoard->board[i][j]->val)
+			if (BoardCopy->board[i][j]->val)
 			{
 				bFoundBlock = true;
 			}
@@ -53,7 +53,7 @@ float AIHeuristic_Bumpiness::GetScore(Stack* tetrisBoard, Stack* BoardCopy)
 		int height = 0;
 		for (int j = 0; j < STACKH; j++)
 		{
-			if (tetrisBoard->board[i][j]->val)
+			if (BoardCopy->board[i][j]->val)
 			{
 				height = STACKH - j;
 				break;
@@ -124,7 +124,7 @@ float AIHeuristic_Blockade::GetScore(Stack* tetrisBoard, Stack* BoardCopy)
 		bool bFoundBlock = false;
 		for (int j = 0; j < STACKH; j++)
 		{
-			if (tetrisBoard->board[i][j]->val)
+			if (BoardCopy->board[i][j]->val)
 			{
 				blockadeCount++;
 				bFoundBlock = true;

@@ -133,10 +133,10 @@ Piece::Piece(enum ColorsType piecetype)
 	default:
 		break;
 	}
-	for (int i = 0; i < 4; i++)
+	/*for (int i = 0; i < 4; i++)
 	{
-		tetromino[i]->y -= 4;
-	}
+		tetromino[i]->y += 4;
+	}*/
 	UpdateTetrominoPos();
 }
 
@@ -284,10 +284,10 @@ void Piece::ResetPos()
 		tetromino[3]->y = 1;	//
 		break;
 	}
-	for (int i = 0; i < 4; i++)
-	{
-		tetromino[i]->y -= 4;
-	}
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	tetromino[i]->y += 4;
+	//}
 	UpdateTetrominoPos();
 }
 

@@ -16,7 +16,6 @@ void Cell::SetTex(std::string const& filename)
 		spr.setTexture(AssetManager::GetTexture(filename));
 		colorFileName = filename;
 	}
-	else
 }
 
 void Cell::SetPosInd(int i, int j) // height, width

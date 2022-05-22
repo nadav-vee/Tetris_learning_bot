@@ -37,11 +37,11 @@ public:
     Cell* tetromino[PIECESIZE];
     int maxRotations;
     int Xpos;
+    int pivot;
 
 private:
     int GetMinXFromTet();
     void ResetPos();
-    int pivot;
     //sf::Vector2i Origin;
     void UpdateTetrominoPos();
     ColorsType curPieceColor;

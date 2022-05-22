@@ -632,7 +632,7 @@ void Stack::RotateR()
 
 void Stack::Drop()
 {
-	bool* FakeToRes;
+	bool* FakeToRes = (bool*)malloc(sizeof(bool));
 	toggleShadow = false;
 	bool dropping = true;
 	while (dropping)
@@ -642,6 +642,7 @@ void Stack::Drop()
 			dropping = false;
 		}
 	}
+	free(FakeToRes);
 }
 
 Stack* Stack::CloneStack()
@@ -656,6 +657,14 @@ Stack* Stack::CloneStack()
 			toret->board[i][j]->x = board[i][j]->x;
 			toret->board[i][j]->y = board[i][j]->y;
 		}
+	}
+	if (held)
+	{
+		toret->held = new Piece(ColorsType::BLUE);
+	}
+	if (heldBuffer)
+	{
+		toret->heldBuffer = new Piece(ColorsType::BLUE);
 	}
 	toret->Qpieces.empty();
 	Piece* tmpPiece;
@@ -682,17 +691,23 @@ Stack* Stack::CloneStack()
 		toret->curpiece->tetromino[j]->y = curpiece->tetromino[j]->y;
 		toret->curpiece->maxRotations = curpiece->maxRotations;
 
-		toret->held->tetromino[j]->SetTex(held->tetromino[j]->colorFileName);
-		toret->held->tetromino[j]->val = held->tetromino[j]->val;
-		toret->held->tetromino[j]->x = held->tetromino[j]->x;
-		toret->held->tetromino[j]->y = held->tetromino[j]->y;
-		toret->held->maxRotations = held->maxRotations;
+		if (held) 
+		{
+			toret->held->tetromino[j]->SetTex(held->tetromino[j]->colorFileName);
+			toret->held->tetromino[j]->val = held->tetromino[j]->val;
+			toret->held->tetromino[j]->x = held->tetromino[j]->x;
+			toret->held->tetromino[j]->y = held->tetromino[j]->y;
+			toret->held->maxRotations = held->maxRotations;
+		}
 
-		toret->heldBuffer->tetromino[j]->SetTex(heldBuffer->tetromino[j]->colorFileName);
-		toret->heldBuffer->tetromino[j]->val = heldBuffer->tetromino[j]->val;
-		toret->heldBuffer->tetromino[j]->x = heldBuffer->tetromino[j]->x;
-		toret->heldBuffer->tetromino[j]->y = heldBuffer->tetromino[j]->y;
-		toret->heldBuffer->maxRotations = heldBuffer->maxRotations;
+		if (heldBuffer)
+		{
+			toret->heldBuffer->tetromino[j]->SetTex(heldBuffer->tetromino[j]->colorFileName);
+			toret->heldBuffer->tetromino[j]->val = heldBuffer->tetromino[j]->val;
+			toret->heldBuffer->tetromino[j]->x = heldBuffer->tetromino[j]->x;
+			toret->heldBuffer->tetromino[j]->y = heldBuffer->tetromino[j]->y;
+			toret->heldBuffer->maxRotations = heldBuffer->maxRotations;
+		}
 
 		toret->shadow->tetromino[j]->SetTex(shadow->tetromino[j]->colorFileName);
 		toret->shadow->tetromino[j]->val = shadow->tetromino[j]->val;
@@ -742,7 +757,7 @@ void Stack::ResetcurpiecePosition()
 	}
 	else
 	{
-		while (WallsColl())
+		while (CeilingColl())
 		{
 			curpiece->MoveTdown();
 		}

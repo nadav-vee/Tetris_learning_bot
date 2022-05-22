@@ -1,5 +1,5 @@
 #include "AIGame.h"
-#define RAND_HEURISTIC_RANGE() (rand()/float(RAND_MAX)* flHeuristicWidth + m_aiHeuristicRange.x)
+#define RAND_HEURISTIC_RANGE() (rand()/float(RAND_MAX)* 2 + 1.0)
 
 
 AIGame::AIGame()
@@ -8,12 +8,12 @@ AIGame::AIGame()
 
 void AIGame::Start()
 {
-	srand(unsigned int(time(NULL)));
+	// srand(unsigned int(time(NULL)));
 	// systems
 	sf::ContextSettings windowSettings;
 	windowSettings.antialiasingLevel = 4;
-	sf::RenderWindow window(sf::VideoMode(W, H), "TETRIS AI", sf::Style::Default, windowSettings);
-	sf::View playerView;
+	sf::RenderWindow window(sf::VideoMode(W, H), "TETRIS AI", sf::Style::Default/*, windowSettings*/);
+	//sf::View playerView;
 	ai = new AI();
 
 	bool paused = false;
@@ -34,12 +34,14 @@ void AIGame::Start()
 				window.close();
 		}
 
+		window.clear();
+
 		sf::Time time = clock.restart();
 		if (!paused)
 		{
 			Update(time.asSeconds());
 		}
-		Draw(&window, time.asSeconds());
+		Draw(window, time.asSeconds());
 		window.display();
 	}
 }
@@ -47,7 +49,7 @@ void AIGame::Start()
 void AIGame::Update(float dt)
 {
 
-
+	ai->SetUpdateFrequency(1);
 	// controller
 	if (ai)
 	{
@@ -107,14 +109,14 @@ void AIGame::Update(float dt)
 			ai->m_heuristics.push_back(new AIHeuristic_Holes(-5.5f));
 			ai->m_heuristics.push_back(new AIHeuristic_Blockade(-.4f * RAND_HEURISTIC_RANGE()));
 			ai->m_heuristics.push_back(new AIHeuristic_Bumpiness(-1.55f * RAND_HEURISTIC_RANGE()));
-			//comp->m_debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Agg Height" });
-			////comp->m_debugHeuristics.push_back(AIDebug{ 0.0f, "Completed Lines" });
-			////comp->m_debugHeuristics.push_back(AIDebug{ 0.0f, "Highest Column" });
-			////comp->m_debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Deepest Hole" });
-			//comp->m_debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Game Loss" });
-			//comp->m_debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Holes" });
-			//comp->m_debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Blockade" });
-			//comp->m_debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Bumpiness" });
+			ai->m_debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Agg Height" });
+			//comp->m_debugHeuristics.push_back(AIDebug{ 0.0f, "Completed Lines" });
+			//comp->m_debugHeuristics.push_back(AIDebug{ 0.0f, "Highest Column" });
+			//comp->m_debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Deepest Hole" });
+			ai->m_debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Game Loss" });
+			ai->m_debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Holes" });
+			ai->m_debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Blockade" });
+			ai->m_debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Bumpiness" });
 		}
 
 		ai->m_timeSinceLastUpdate += dt;
@@ -132,22 +134,13 @@ void AIGame::Update(float dt)
 	}
 }
 
-void AIGame::Draw(sf::RenderWindow* window, float dt)
+void AIGame::Draw(sf::RenderWindow& window, float dt)
 {
 	// move
 
 	//// Debug
 	Stack* current = ai->tetris;
-
-	for (int i = 0; i < ai->m_debugHeuristics.size(); i++)
-	{
-		std::string textStr = ai->m_debugHeuristics[i].m_description;
-		textStr += " " + std::to_string(ai->m_debugHeuristics[i].m_lastScore);
-		text.setPosition(sf::Vector2f(50, (float)250 + i * 20));
-		text.setString(textStr.c_str());
-		window->draw(text);
-	}
-
+	current->Draw(window);
 
 	// 
 }

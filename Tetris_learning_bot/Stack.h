@@ -109,7 +109,7 @@ private:
 	bool CheckToDel(int index);
 	void DeleteLine(int index);
 	bool CheckTetris(int index);
-	bool toggleShadow = true;
+	bool toggleShadow = false;
 	bool isHolding = false;
 	bool didInsertToHold = false;
 };
