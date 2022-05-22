@@ -38,10 +38,10 @@ public:
     int maxRotations;
     int Xpos;
     int pivot;
+    void ResetPos();
 
 private:
     int GetMinXFromTet();
-    void ResetPos();
     //sf::Vector2i Origin;
     void UpdateTetrominoPos();
     ColorsType curPieceColor;

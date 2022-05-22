@@ -176,17 +176,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AI.cpp" />
-    <ClCompile Include="AIControllerComponent.cpp" />
-    <ClCompile Include="AIControllerSystem.cpp" />
-    <ClCompile Include="AIEvaluatorComponent.cpp" />
-    <ClCompile Include="AIEvaluatorSystem.cpp" />
-    <ClCompile Include="AIEvaluatorUtil.cpp" />
     <ClCompile Include="AIGame.cpp" />
     <ClCompile Include="AIHeuristic.cpp" />
-    <ClCompile Include="AIMoveSystem.cpp" />
-    <ClCompile Include="AIprocessing.cpp" />
-    <ClCompile Include="AISpawnComponent.cpp" />
-    <ClCompile Include="AISpawnSystem.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Cell.cpp" />
     <ClCompile Include="Piece.cpp" />
@@ -197,17 +188,8 @@
   <ItemGroup>
     <ClInclude Include="AI.h" />
     <ClInclude Include="AICommon.h" />
-    <ClInclude Include="AIControllerComponent.h" />
-    <ClInclude Include="AIControllerSystem.h" />
-    <ClInclude Include="AIEvaluatorComponent.h" />
-    <ClInclude Include="AIEvaluatorSystem.h" />
-    <ClInclude Include="AIEvaluatorUtil.h" />
     <ClInclude Include="AIGame.h" />
     <ClInclude Include="AIHeuristic.h" />
-    <ClInclude Include="AIMoveSystem.h" />
-    <ClInclude Include="AIprocessing.h" />
-    <ClInclude Include="AISpawnComponent.h" />
-    <ClInclude Include="AISpawnSystem.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="const.h" />

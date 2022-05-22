@@ -200,7 +200,7 @@ int Piece::GetMinXFromTet()
 	int x = INT_MAX;
 	for (int i = 0; i < PIECESIZE; i++)
 	{
-		if (x < tetromino[i]->x) x = tetromino[i]->x;
+		if (x > tetromino[i]->x) x = tetromino[i]->x;
 	}
 	return x;
 }

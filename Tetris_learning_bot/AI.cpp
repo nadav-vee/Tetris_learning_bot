@@ -70,7 +70,10 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 				if (colIdx > tetrisBoard->curpiece->tetromino[i]->x)
 					colIdx = tetrisBoard->curpiece->tetromino[i]->x;
 			}
-			boardCopy->Drop();
+			bool* Res = new bool();
+			boardCopy->Drop(Res);
+			if (*Res)
+				boardCopy->resetCount++;
 
 			// Try the current piece in a specific position
 			// Try the next piece in a specific position	
@@ -91,7 +94,7 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 				currentScore += lookaheadMove.score;
 			}
 
-			if (currentScore > result.score)
+			if (currentScore < result.score)
 			{
 				result.score = currentScore;
 				result.numRotations = j;
@@ -128,10 +131,12 @@ void AI::SetUpdateFrequency(float time)
 
 void AI::SetCurrentMove(DesiredMoveSet& move)
 {
-	if (move.id != m_currentMove.id)
-	{
-		m_currentMove = move;
-	}
+
+	m_currentMove = move;
+
+	//if (move.id != m_currentMove.id)
+	//{
+	//}
 }
 
 bool AI::NeedsNewMove()

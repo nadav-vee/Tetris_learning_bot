@@ -176,6 +176,8 @@ int Stack::CopyPeiceToStack()
 		{
 			board[y][x]->val = true;
 			board[y][x]->spr = curpiece->tetromino[i]->spr;
+			board[y][x]->x = x;
+			board[y][x]->y = y;
 		}
 	}
 
@@ -630,19 +632,34 @@ void Stack::RotateR()
 	curpiece->RotateTR();
 }
 
-void Stack::Drop()
+void Stack::Drop(bool* restart)
 {
-	bool* FakeToRes = (bool*)malloc(sizeof(bool));
-	toggleShadow = false;
-	bool dropping = true;
-	while (dropping)
+	if (StackColl())
 	{
-		if (Update(FakeToRes))
-		{
-			dropping = false;
-		}
+		*restart = true;
+		return;
 	}
-	free(FakeToRes);
+	if (BottomColl())
+	{
+		CheckScore(CopyPeiceToStack());
+		return;
+	}
+	curpiece->MoveTdown();
+	curpieceBuffer->MoveTdown();
+	if (BlocksColl())
+	{
+		curpiece->MoveTup();
+		curpieceBuffer->MoveTup();
+		CheckScore(CopyPeiceToStack());
+		return;
+	}
+	Drop(restart);
+}
+
+void Stack::NewPieceAndDrop(bool* restart)
+{
+	Drop(restart);
+	SwitchPiece();
 }
 
 Stack* Stack::CloneStack()
@@ -691,7 +708,7 @@ Stack* Stack::CloneStack()
 		toret->curpiece->tetromino[j]->y = curpiece->tetromino[j]->y;
 		toret->curpiece->maxRotations = curpiece->maxRotations;
 
-		if (held) 
+		if (held)
 		{
 			toret->held->tetromino[j]->SetTex(held->tetromino[j]->colorFileName);
 			toret->held->tetromino[j]->val = held->tetromino[j]->val;
@@ -732,6 +749,7 @@ Stack* Stack::CloneStack()
 
 void Stack::ResetcurpiecePosition()
 {
+	curpiece->ResetPos();
 	if (!WallsColl())
 	{
 		curpiece->MoveT(-1);
@@ -742,9 +760,19 @@ void Stack::ResetcurpiecePosition()
 	}
 	else
 	{
-		while (WallsColl())
+		if (curpiece->Xpos < 5)
 		{
-			curpiece->MoveT(1);
+			while (WallsColl())
+			{
+				curpiece->MoveT(1);
+			}
+		}
+		else
+		{
+			while (WallsColl())
+			{
+				curpiece->MoveT(-1);
+			}
 		}
 	}
 	if (!CeilingColl())
@@ -762,6 +790,9 @@ void Stack::ResetcurpiecePosition()
 			curpiece->MoveTdown();
 		}
 	}
+	curpiece->MoveTdown();
+	curpiece->MoveT(1);
+
 }
 
 int Stack::GetMaximumSetXPos()

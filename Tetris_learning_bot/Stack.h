@@ -92,10 +92,12 @@ public:
 	void Move(int x);
 	void RotateL();
 	void RotateR();
-	void Drop();
+	void Drop(bool* restart);
+	void NewPieceAndDrop(bool* restart);
 	Stack* CloneStack();
 	void ResetcurpiecePosition();
 	int GetMaximumSetXPos();
+	void AISwitchPiece();
 	int resetCount;
 
 private:

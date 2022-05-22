@@ -65,6 +65,7 @@ void AIGame::Update(float dt)
 					ai->m_currentMove.used = true;
 					ai->tetris->SwitchPiece();
 				}
+
 				else
 				{
 					bool shouldDrop = true;
@@ -87,7 +88,11 @@ void AIGame::Update(float dt)
 					if (shouldDrop)
 					{
 						ai->m_currentMove.used = true;
-						ai->tetris->Drop();
+						ai->m_currentMove.swapPiece = true;
+						bool* Res = new bool();
+						ai->tetris->NewPieceAndDrop(Res);
+						if (*Res)
+							ai->tetris->resetCount++;
 					}
 				}
 			}
