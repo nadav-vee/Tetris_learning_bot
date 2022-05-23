@@ -1,33 +1,33 @@
 #include "AI.h"
 
 AI::AI()
-	: m_timeUntilUpdate(AI_CONTROLLER_UPDATE_FREQUENCY)
-	, m_updateFrequency(AI_CONTROLLER_UPDATE_FREQUENCY)
+	: timeUntilUpdate(AI_CONTROLLER_UPDATE_FREQUENCY)
+	, updateFrequency(AI_CONTROLLER_UPDATE_FREQUENCY)
 	, m_aiSpawnPos(0, 0)
 {
 
 	tetris = new Stack();
-	m_currentMove.used = true; // controller comp
+	currentMove.used = true; // controller comp
 
 	m_aiSpawnPos.x = BW; // spawn comp
 	m_aiSpawnPos.y = 0;
 
-	m_timeSinceLastUpdate = 0.0f + rand() / (float)RAND_MAX; // eval comp
+	timeSinceLastUpdate = 0.0f + rand() / (float)RAND_MAX; // eval comp
 }
 
 void AI::FindBestMove()
 {
 	if (tetris)
 	{
-		m_timeSinceLastUpdate = 0.0f;
+		timeSinceLastUpdate = 0.0f;
 
 		// Stop AI when game is lost
-		m_bestMoves[0] = __FindBestMove(tetris, NUM_LOOKAHEAD, false);
+		bestMoves[0] = __FindBestMove(tetris, NUM_LOOKAHEAD, false);
 		DesiredMoveSet heldMove = __FindBestMove(tetris, NUM_LOOKAHEAD, true);
 
-		if (heldMove.score > m_bestMoves[0].score)
+		if (heldMove.score > bestMoves[0].score)
 		{
-			m_bestMoves[0] = heldMove;
+			bestMoves[0] = heldMove;
 		}
 	}
 }
@@ -43,32 +43,34 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 		return result;
 	}
 
-	for (int i = 0; i < STACKW; i++)
+	// Try all rotations	
+	int rotations = tetrisBoard->curpiece->maxRotations;
+	for (int j = 0; j < rotations; j++)
 	{
-		// Try all rotations	
-		int rotations = tetrisBoard->curpiece->maxRotations;
-		for (int j = 0; j < rotations; j++)
+		// Make a copy of the board
+		Stack* boardCopy = tetrisBoard->CloneStack();
+
+		if (holdPiece)
 		{
-			// Make a copy of the board
-			Stack* boardCopy = tetrisBoard->CloneStack();
+			boardCopy->AIHold();
+			result.swapPiece = true;
+		}
 
-			if (holdPiece)
-			{
-				boardCopy->Hold();
-				result.swapPiece = true;
-			}
+		for (int numRotations = 0; numRotations < j; numRotations++)
+		{
+			boardCopy->curpiece->RotateTR();
+		}
+		boardCopy->ResetcurpiecePosition();
 
-			for (int numRotations = 0; numRotations < j; numRotations++)
-			{
-				boardCopy->curpiece->RotateTR();
-			}
-			boardCopy->ResetcurpiecePosition();
+		int colMax = boardCopy->GetMaximumSetXPos();
+		for (int i = 0; i < colMax; i++)
+		{
 			boardCopy->curpiece->SetPosition(i, 0);
 			int colIdx = INT_MAX;
-			for (int i = 0; i < PIECESIZE; i++)
+			for (int s = 0; s < PIECESIZE; s++)
 			{
-				if (colIdx > tetrisBoard->curpiece->tetromino[i]->x)
-					colIdx = tetrisBoard->curpiece->tetromino[i]->x;
+				if (colIdx > boardCopy->curpiece->tetromino[s]->x)
+					colIdx = boardCopy->curpiece->tetromino[s]->x;
 			}
 			bool* Res = new bool();
 			boardCopy->Drop(Res);
@@ -80,7 +82,7 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 
 			// Try the next lookahead
 			float currentScore = 0.0f;
-			for (auto h : m_heuristics)
+			for (auto h : heuristics)
 			{
 				// Score the grid	
 				float score = h->GetScore(tetrisBoard, boardCopy);
@@ -94,7 +96,7 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 				currentScore += lookaheadMove.score;
 			}
 
-			if (currentScore < result.score)
+			if (currentScore > result.score)
 			{
 				result.score = currentScore;
 				result.numRotations = j;
@@ -103,36 +105,36 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 
 				int index = 0;
 
-				for (auto h : m_heuristics)
+				for (auto h : heuristics)
 				{
 					if (numLookaheads == NUM_LOOKAHEAD - 1)
 					{
 						float score = h->GetScore(tetrisBoard, boardCopy);
-						m_debugHeuristics[index].m_lastScore = score;
+						// debugHeuristics[index].m_lastScore = score;
 					}
 					index++;
 				}
 
 				if (numLookaheads > 0)
 				{
-					m_bestMoves[NUM_LOOKAHEAD - numLookaheads] = lookaheadMove;
+					bestMoves[NUM_LOOKAHEAD - numLookaheads] = lookaheadMove;
 				}
 			}
-			delete boardCopy;
 		}
+		delete boardCopy;
 	}
 	return result;
 }
 
 void AI::SetUpdateFrequency(float time)
 {
-	m_updateFrequency = time;
+	updateFrequency = time;
 }
 
 void AI::SetCurrentMove(DesiredMoveSet& move)
 {
 
-	m_currentMove = move;
+	currentMove = move;
 
 	//if (move.id != m_currentMove.id)
 	//{
@@ -141,10 +143,10 @@ void AI::SetCurrentMove(DesiredMoveSet& move)
 
 bool AI::NeedsNewMove()
 {
-	return m_currentMove.used;
+	return currentMove.used;
 }
 
 DesiredMoveSet AI::GetBestMove()
 {
-	return m_bestMoves[0];
+	return bestMoves[0];
 }

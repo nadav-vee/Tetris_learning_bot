@@ -28,7 +28,7 @@
 #define BCKTOBCKSCORE	1200
 #define STARTINGXVAL	4
 #define NEXTPXVAL		11
-#define HELDPYVAL		19
+#define HELDPYVAL		16
 
 #define FONT		"font.ttf"
 
@@ -49,3 +49,7 @@
 #define SHADOWTpiece		"assets/shadow/purpleshadow.png"
 #define SHADOWZpiece		"assets/shadow/redshadow.png"
 #define SHADOWOpiece		"assets/shadow/yellowshadow.png"
+
+#define USERGAMESPRITE		"assets/Tetris-userGame.png"
+#define AIGAMESPRITE		"assets/AI.png"
+#define TETRISSPR			"assets/tetris-logo.png"

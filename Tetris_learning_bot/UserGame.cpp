@@ -8,13 +8,12 @@ UserGame::UserGame()
 	// init logic
 }
 
-void UserGame::Start()
+void UserGame::Start(sf::RenderWindow& window)
 {
 	// game logic
 	// change constants
 	// AssetManager manager;
 	Stack* s = new Stack();
-	sf::RenderWindow window(sf::VideoMode(W, H), "TETRIS!");
 	sf::Clock clock;
 	// time variables
 
@@ -85,10 +84,13 @@ void UserGame::Start()
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
-			if (event.type == sf::Event::Closed ||
-				(event.type == sf::Event::KeyPressed &&
-					event.key.code == sf::Keyboard::Escape))
+			if (event.type == sf::Event::Closed)
 				window.close();
+			if (event.type == sf::Event::KeyPressed &&
+				event.key.code == sf::Keyboard::Escape)
+			{
+				return;
+			}
 			if (event.type == sf::Event::KeyReleased
 				&& event.key.code == sf::Keyboard::Space)
 			{

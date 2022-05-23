@@ -198,6 +198,7 @@
     <ClInclude Include="UserGame.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="assets\AI.png" />
     <Image Include="assets\blue.png" />
     <Image Include="assets\green.png" />
     <Image Include="assets\grey.png" />
@@ -206,6 +207,8 @@
     <Image Include="assets\purple.png" />
     <Image Include="assets\red.png" />
     <Image Include="assets\shadow.png" />
+    <Image Include="assets\tetris-logo.png" />
+    <Image Include="assets\Tetris-userGame.png" />
     <Image Include="assets\yellow.png" />
   </ItemGroup>
   <ItemGroup>

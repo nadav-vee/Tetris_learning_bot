@@ -41,18 +41,18 @@ public:
 	float m_flXOffset;
 	float m_flYOffset;
 
-	bool CanFindMove() { return m_timeSinceLastUpdate > AI_UPDATE_RATE_SECONDS; }
+	bool CanFindMove() { return timeSinceLastUpdate > AI_UPDATE_RATE_SECONDS; }
 	DesiredMoveSet GetBestMove();
-	bool m_initialized;
-	sf::Vector2f m_aiHeuristicRange;
-	std::vector<AIHeuristic*> m_heuristics;
-	std::vector<AIDebugHeuristic> m_debugHeuristics;
-	DesiredMoveSet m_bestMoves[NUM_LOOKAHEAD];
-	DesiredMoveSet m_currentMove;
+	bool initialized;
+	sf::Vector2f aiHeuristicRange;
+	std::vector<AIHeuristic*> heuristics;
+	std::vector<AIDebugHeuristic> debugHeuristics;
+	DesiredMoveSet bestMoves[NUM_LOOKAHEAD];
+	DesiredMoveSet currentMove;
 	Stack* tetris;
-	float m_timeSinceLastUpdate;
-	float m_timeUntilUpdate;
-	float m_updateFrequency;
+	float timeSinceLastUpdate;
+	float timeUntilUpdate;
+	float updateFrequency;
 	/*AIEvaluatorSystem* curSys;*/
 };
 

@@ -28,6 +28,7 @@ public:
     void Shadow();
     ////////////////
     void MoveT(int dir);
+    void MoveTY(int dir);
     void MoveTdown();
     void MoveTup();
     void DrawT(sf::RenderWindow& window);
@@ -37,12 +38,14 @@ public:
     Cell* tetromino[PIECESIZE];
     int maxRotations;
     int Xpos;
+    int Ypos;
     int pivot;
     void ResetPos();
+    void UpdatePos();
 
 private:
-    int GetMinXFromTet();
     //sf::Vector2i Origin;
-    void UpdateTetrominoPos();
+    int GetMinYFromTet();
+    int GetMinXFromTet();
     ColorsType curPieceColor;
 };

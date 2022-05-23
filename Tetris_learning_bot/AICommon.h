@@ -12,7 +12,6 @@ class DesiredMoveSet
 public:
 	DesiredMoveSet()
 		: score(DEFAULT_SCORE)
-		, id(-1)
 		, numRotations(0)
 		, col(0)
 		, swapPiece(false)
@@ -23,7 +22,6 @@ public:
 
 
 	float score;
-	int id;
 	int numRotations;
 	int col;
 	bool swapPiece;

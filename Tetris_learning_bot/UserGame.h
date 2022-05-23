@@ -5,7 +5,7 @@ class UserGame
 {
 public:
 	UserGame();
-	void Start();
+	void Start(sf::RenderWindow& window);
 private:
 	sf::Text highscoreTX;
 	sf::Text Score;

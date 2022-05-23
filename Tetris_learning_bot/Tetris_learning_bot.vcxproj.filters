@@ -103,6 +103,15 @@
     <Image Include="assets\yellow.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="assets\AI.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\tetris-logo.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\Tetris-userGame.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="font.ttf">

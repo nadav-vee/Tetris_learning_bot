@@ -93,6 +93,7 @@ public:
 	void RotateL();
 	void RotateR();
 	void Drop(bool* restart);
+	void AIHold();
 	void NewPieceAndDrop(bool* restart);
 	Stack* CloneStack();
 	void ResetcurpiecePosition();
