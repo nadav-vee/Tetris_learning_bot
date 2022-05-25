@@ -14,7 +14,7 @@ void AIGame::Start(sf::RenderWindow& window)
 	//sf::View playerView;
 	ai = new AI();
 
-
+	bool* restart = new bool();
 	sf::Text highscoreTX;
 	sf::Text Score;
 	sf::Text LosingMessage;
@@ -91,11 +91,49 @@ void AIGame::Start(sf::RenderWindow& window)
 			sco += to_string(HighScore);
 			highscoreTX.setString(sco);
 		}
+	
 		Draw(window, time.asSeconds());
 		window.draw(Score);
 		window.draw(highscoreTX);
 		window.draw(*upperHoldLine);
 		window.display();
+
+		////////////////////////////////////////
+		if (*restart)
+		{
+			string sco = "High Score = ";
+			sco += std::to_string(HighScore);
+			highscoreTX.setString(sco);
+			// delete s;
+			delete ai->tetris;
+			ai->tetris = new Stack();
+
+
+			// general game variables
+			*restart = false;
+
+			sf::RenderWindow windowyoulost(sf::VideoMode(W / 2, H / 2), "welp you dieded");
+			while (windowyoulost.isOpen())
+			{
+				sf::Event eventt;
+				while (windowyoulost.pollEvent(eventt))
+				{
+					if (eventt.type == sf::Event::Closed)
+						windowyoulost.close();
+					if (eventt.type == sf::Event::KeyPressed
+						&& eventt.key.code == sf::Keyboard::Space)
+					{
+					}
+				}
+
+				windowyoulost.clear();
+
+				windowyoulost.draw(LosingMessage);
+
+				windowyoulost.display();
+			}
+		}
+		////////////////////////////////////////
 	}
 }
 

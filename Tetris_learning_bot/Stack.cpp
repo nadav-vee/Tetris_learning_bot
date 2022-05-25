@@ -175,7 +175,7 @@ int Stack::CopyPeiceToStack()
 		if (x < 10 && x >= 0 && y >= 0 && y < 20)
 		{
 			board[y][x]->val = true;
-			board[y][x]->spr = curpiece->tetromino[i]->spr;
+			board[y][x]->SetTex(curpiece->tetromino[i]->colorFileName);
 			board[y][x]->x = x;
 			board[y][x]->y = y;
 		}
@@ -780,7 +780,14 @@ void Stack::ResetcurpiecePosition()
 {
 	curpiece->Xpos = 0;
 	curpiece->Ypos = 0;
-	curpiece->UpdatePos();
+	curpiece->ResetPos();
+}
+
+void Stack::ResetcurpiecePositionForRotation()
+{
+	curpiece->Xpos = 4;
+	curpiece->Ypos = 1;
+	curpiece->ResetPos();
 }
 
 int Stack::GetMaximumSetXPos()

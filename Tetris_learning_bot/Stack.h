@@ -97,6 +97,7 @@ public:
 	void NewPieceAndDrop(bool* restart);
 	Stack* CloneStack();
 	void ResetcurpiecePosition();
+	void ResetcurpiecePositionForRotation();
 	int GetMaximumSetXPos();
 	void AISwitchPiece();
 	int resetCount;

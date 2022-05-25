@@ -43,6 +43,8 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 		return result;
 	}
 
+	
+
 	// Try all rotations	
 	int rotations = tetrisBoard->curpiece->maxRotations;
 	for (int j = 0; j < rotations; j++)
@@ -50,28 +52,27 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 		// Make a copy of the board
 		Stack* boardCopy = tetrisBoard->CloneStack();
 
+
 		if (holdPiece)
 		{
 			boardCopy->AIHold();
 			result.swapPiece = true;
 		}
 
+		boardCopy->ResetcurpiecePositionForRotation();
+
 		for (int numRotations = 0; numRotations < j; numRotations++)
 		{
 			boardCopy->curpiece->RotateTR();
 		}
+
 		boardCopy->ResetcurpiecePosition();
 
 		int colMax = boardCopy->GetMaximumSetXPos();
 		for (int i = 0; i < colMax; i++)
 		{
 			boardCopy->curpiece->SetPosition(i, 0);
-			int colIdx = INT_MAX;
-			for (int s = 0; s < PIECESIZE; s++)
-			{
-				if (colIdx > boardCopy->curpiece->tetromino[s]->x)
-					colIdx = boardCopy->curpiece->tetromino[s]->x;
-			}
+			int colIdx = boardCopy->curpiece->Xpos;
 			bool* Res = new bool();
 			boardCopy->Drop(Res);
 			if (*Res)
@@ -103,17 +104,17 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 				result.col = colIdx;
 				result.used = false;
 
-				int index = 0;
+				/*int index = 0;*/
 
-				for (auto h : heuristics)
-				{
-					if (numLookaheads == NUM_LOOKAHEAD - 1)
-					{
-						float score = h->GetScore(tetrisBoard, boardCopy);
-						// debugHeuristics[index].m_lastScore = score;
-					}
-					index++;
-				}
+				//for (auto h : heuristics)
+				//{
+				//	if (numLookaheads == NUM_LOOKAHEAD - 1)
+				//	{
+				//		float score = h->GetScore(tetrisBoard, boardCopy);
+				//		// debugHeuristics[index].m_lastScore = score;
+				//	}
+				//	index++;
+				//}
 
 				if (numLookaheads > 0)
 				{
