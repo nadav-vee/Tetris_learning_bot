@@ -59,7 +59,7 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 
 			if (holdPiece)
 			{
-				boardCopy->AIHold();
+				boardCopy->Hold();
 				result.swapPiece = true;
 			}
 
@@ -71,7 +71,6 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 			}
 
 			boardCopy->ResetcurpiecePosition();
-
 
 			boardCopy->curpiece->SetPosition(i, 0);
 

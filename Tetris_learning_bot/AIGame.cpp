@@ -89,7 +89,7 @@ void AIGame::Start(sf::RenderWindow& window)
 			sco += to_string(HighScore);
 			highscoreTX.setString(sco);
 		}
-	
+
 		Draw(window, time.asSeconds());
 		window.draw(Score);
 		window.draw(highscoreTX);
@@ -152,7 +152,7 @@ void AIGame::Update(float dt)
 				if (ai->currentMove.swapPiece && !ai->tetris->didInsertToHold)
 				{
 					ai->currentMove.used = true;
-					ai->tetris->AIHold();
+					ai->tetris->Hold();
 				}
 
 				else
@@ -186,6 +186,9 @@ void AIGame::Update(float dt)
 							ai->tetris->resetCount++;
 					}
 				}
+
+				ai->tetris->CopyPieceFunc(buff::PIECETOBUFF);
+				ai->tetris->SetShadow();
 			}
 		}
 	} // move
@@ -195,24 +198,11 @@ void AIGame::Update(float dt)
 	{
 		if (!ai->initialized)
 		{
-			float flHeuristicWidth = ai->aiHeuristicRange.y - ai->aiHeuristicRange.x;
 			ai->initialized = true;
 			ai->heuristics.push_back(new AIHeuristic_AggregateHeight(-2.00));
-			////comp->m_heuristics.push_back(new AIHeuristic_CompletedLines(2));
-			////comp->m_heuristics.push_back(new AIHeuristic_HighestCol(-2.75));
-			////comp->m_heuristics.push_back(new AIHeuristic_DeepestHole(2.0 * RAND_HEURISTIC_RANGE()));
-			//comp->m_heuristics.push_back(new AIHeuristic_GameLoss(-1 * RAND_HEURISTIC_RANGE()));
 			ai->heuristics.push_back(new AIHeuristic_Holes(-5.5f));
 			ai->heuristics.push_back(new AIHeuristic_Blockade(-0.4f));
 			ai->heuristics.push_back(new AIHeuristic_Bumpiness(-1.55f));
-			// ai->debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Agg Height" });
-			//comp->m_debugHeuristics.push_back(AIDebug{ 0.0f, "Completed Lines" });
-			//comp->m_debugHeuristics.push_back(AIDebug{ 0.0f, "Highest Column" });
-			//comp->m_debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Deepest Hole" });
-			/*ai->debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Game Loss" });
-			ai->debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Holes" });
-			ai->debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Blockade" });
-			ai->debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Bumpiness" });*/
 		}
 
 		ai->timeSinceLastUpdate += dt;

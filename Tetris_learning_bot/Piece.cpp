@@ -172,8 +172,7 @@ void Piece::SetPosition(int x, int y)
 
 void Piece::SetStartingPos()
 {
-	ResetPos();
-	MoveT(STARTINGXVAL);
+	SetPosition(STARTINGXVAL, 0);
 }
 
 
@@ -245,7 +244,7 @@ void Piece::UpdatePos()
 	Ypos = GetMinYFromTet();
 }
 
-void Piece::MoveT(int dir)
+void Piece::MoveX(int dir)
 {
 	for (int i = 0; i < PIECESIZE; i++)
 	{
@@ -254,7 +253,7 @@ void Piece::MoveT(int dir)
 	UpdatePos();
 }
 
-void Piece::MoveTY(int dir)
+void Piece::MoveY(int dir)
 {
 	for (int i = 0; i < PIECESIZE; i++)
 	{

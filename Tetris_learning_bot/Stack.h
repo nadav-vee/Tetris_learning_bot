@@ -93,7 +93,6 @@ public:
 	void RotateL();
 	void RotateR();
 	void Drop(bool* restart);
-	void AIHold();
 	void NewPieceAndDrop(bool* restart);
 	Stack* CloneStack();
 	void ResetcurpiecePosition();
@@ -106,15 +105,14 @@ public:
 private:
 	Piece* NewPiece(ColorsType rp);
 	bool IsShadowColl();
-	bool ShadowUpdate(bool* toRes);
-	bool ShadowStackColl();
+	bool ShadowUpdate();
 	bool ShadowBlocksColl();
 	bool ShadowBottomColl();
 	bool CeilingColl();
 	bool CheckToDel(int index);
 	void DeleteLine(int index);
 	bool CheckTetris(int index);
-	bool toggleShadow = false;
+	bool toggleShadow = true;
 	bool isHolding = false;
 };
 

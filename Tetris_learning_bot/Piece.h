@@ -27,8 +27,8 @@ public:
     void SetHeldPosition();
     void Shadow();
     ////////////////
-    void MoveT(int dir);
-    void MoveTY(int dir);
+    void MoveX(int dir);
+    void MoveY(int dir);
     void MoveTdown();
     void MoveTup();
     void DrawT(sf::RenderWindow& window);
