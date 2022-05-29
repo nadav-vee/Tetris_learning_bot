@@ -101,6 +101,7 @@ public:
 	int GetMaximumSetXPos();
 	void AISwitchPiece();
 	int resetCount;
+	bool didInsertToHold = false;
 
 private:
 	Piece* NewPiece(ColorsType rp);
@@ -115,7 +116,6 @@ private:
 	bool CheckTetris(int index);
 	bool toggleShadow = false;
 	bool isHolding = false;
-	bool didInsertToHold = false;
 };
 
 // idea : 

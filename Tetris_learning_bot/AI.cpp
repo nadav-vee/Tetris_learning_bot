@@ -43,35 +43,43 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 		return result;
 	}
 
-	
+	int colMax = STACKW;
+	bool xmaxset = false;
 
 	// Try all rotations	
 	int rotations = tetrisBoard->curpiece->maxRotations;
 	for (int j = 0; j < rotations; j++)
 	{
-		// Make a copy of the board
-		Stack* boardCopy = tetrisBoard->CloneStack();
-
-
-		if (holdPiece)
-		{
-			boardCopy->AIHold();
-			result.swapPiece = true;
-		}
-
-		boardCopy->ResetcurpiecePositionForRotation();
-
-		for (int numRotations = 0; numRotations < j; numRotations++)
-		{
-			boardCopy->curpiece->RotateTR();
-		}
-
-		boardCopy->ResetcurpiecePosition();
-
-		int colMax = boardCopy->GetMaximumSetXPos();
+		xmaxset = false;
 		for (int i = 0; i < colMax; i++)
 		{
+			// Make a copy of the board
+			Stack* boardCopy = tetrisBoard->CloneStack();
+
+
+			if (holdPiece)
+			{
+				boardCopy->AIHold();
+				result.swapPiece = true;
+			}
+
+			boardCopy->ResetcurpiecePositionForRotation();
+
+			for (int numRotations = 0; numRotations < j; numRotations++)
+			{
+				boardCopy->curpiece->RotateTR();
+			}
+
+			boardCopy->ResetcurpiecePosition();
+
+
 			boardCopy->curpiece->SetPosition(i, 0);
+
+			if (!xmaxset)
+			{
+				colMax = boardCopy->GetMaximumSetXPos();
+				xmaxset = true;
+			}
 			int colIdx = boardCopy->curpiece->Xpos;
 			bool* Res = new bool();
 			boardCopy->Drop(Res);
@@ -97,7 +105,7 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 				currentScore += lookaheadMove.score;
 			}
 
-			if (currentScore > result.score)
+			if (currentScore >= result.score)
 			{
 				result.score = currentScore;
 				result.numRotations = j;
@@ -121,8 +129,8 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 					bestMoves[NUM_LOOKAHEAD - numLookaheads] = lookaheadMove;
 				}
 			}
+			delete boardCopy;
 		}
-		delete boardCopy;
 	}
 	return result;
 }

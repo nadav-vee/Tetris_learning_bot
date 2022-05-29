@@ -1,6 +1,4 @@
 #include "AIGame.h"
-#define RAND_HEURISTIC_RANGE() (rand()/float(RAND_MAX)* 2 + 1.0)
-
 using namespace std;
 
 AIGame::AIGame()
@@ -140,7 +138,7 @@ void AIGame::Start(sf::RenderWindow& window)
 void AIGame::Update(float dt)
 {
 
-	ai->SetUpdateFrequency(1);
+	ai->SetUpdateFrequency(0.5);
 	// controller
 	if (ai)
 	{
@@ -151,7 +149,7 @@ void AIGame::Update(float dt)
 			ai->timeUntilUpdate += ai->updateFrequency;
 			if (!ai->currentMove.used)
 			{
-				if (ai->currentMove.swapPiece)
+				if (ai->currentMove.swapPiece && !ai->tetris->didInsertToHold)
 				{
 					ai->currentMove.used = true;
 					ai->tetris->AIHold();
@@ -160,10 +158,13 @@ void AIGame::Update(float dt)
 				else
 				{
 					bool shouldDrop = true;
-					if (ai->tetris->curpiece->maxRotations < ai->currentMove.numRotations)
+					if (0 < ai->currentMove.numRotations)
 					{
 						shouldDrop = false;
+						ai->tetris->ResetcurpiecePositionForRotation();
 						ai->tetris->RotateR();
+						ai->tetris->ResetcurpiecePosition();
+						ai->currentMove.numRotations--;
 					}
 					else if (ai->tetris->curpiece->Xpos < ai->currentMove.col)
 					{
@@ -196,14 +197,14 @@ void AIGame::Update(float dt)
 		{
 			float flHeuristicWidth = ai->aiHeuristicRange.y - ai->aiHeuristicRange.x;
 			ai->initialized = true;
-			ai->heuristics.push_back(new AIHeuristic_AggregateHeight(1/*-2.00 * RAND_HEURISTIC_RANGE()*/));
+			ai->heuristics.push_back(new AIHeuristic_AggregateHeight(-2.00));
 			////comp->m_heuristics.push_back(new AIHeuristic_CompletedLines(2));
 			////comp->m_heuristics.push_back(new AIHeuristic_HighestCol(-2.75));
 			////comp->m_heuristics.push_back(new AIHeuristic_DeepestHole(2.0 * RAND_HEURISTIC_RANGE()));
 			//comp->m_heuristics.push_back(new AIHeuristic_GameLoss(-1 * RAND_HEURISTIC_RANGE()));
-			ai->heuristics.push_back(new AIHeuristic_Holes(1/*-5.5f*/));
-			ai->heuristics.push_back(new AIHeuristic_Blockade(1/*-.4f * RAND_HEURISTIC_RANGE()*/));
-			ai->heuristics.push_back(new AIHeuristic_Bumpiness(1/*-1.55f * RAND_HEURISTIC_RANGE()*/));
+			ai->heuristics.push_back(new AIHeuristic_Holes(-5.5f));
+			ai->heuristics.push_back(new AIHeuristic_Blockade(-0.4f));
+			ai->heuristics.push_back(new AIHeuristic_Bumpiness(-1.55f));
 			// ai->debugHeuristics.push_back(AIDebugHeuristic{ 0.0f, "Agg Height" });
 			//comp->m_debugHeuristics.push_back(AIDebug{ 0.0f, "Completed Lines" });
 			//comp->m_debugHeuristics.push_back(AIDebug{ 0.0f, "Highest Column" });

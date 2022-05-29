@@ -668,7 +668,7 @@ void Stack::AIHold()
 		CopyPieceFunc(buff::HELDTOHBUFF);
 		CopyPieceFunc(buff::PIECETOHELD);
 		CopyPieceFunc(buff::HBUFFTOPIECE);
-		curpiece->UpdatePos();
+		curpiece->ResetPos();
 		held->SetHeldPosition();
 		heldBuffer->SetHeldPosition();
 	}
