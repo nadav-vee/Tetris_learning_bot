@@ -140,7 +140,7 @@ void AIGame::Start(sf::RenderWindow& window)
 void AIGame::Update(float dt, bool* res)
 {
 
-	ai->SetUpdateFrequency(0.5);
+	ai->SetUpdateFrequency(0.05);
 	// controller
 	if (ai)
 	{

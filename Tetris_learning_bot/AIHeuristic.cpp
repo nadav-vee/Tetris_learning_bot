@@ -79,7 +79,7 @@ float AIHeuristic_Bumpiness::GetScore(Stack* tetrisBoard, Stack* BoardCopy)
 float AIHeuristic_GameLoss::GetScore(Stack* tetrisBoard, Stack* BoardCopy)
 {
 	float result = 0.0f;
-	if (tetrisBoard->resetCount > BoardCopy->resetCount)
+	if (tetrisBoard->resetCount < BoardCopy->resetCount)
 	{
 		result = -100000000;
 	}
