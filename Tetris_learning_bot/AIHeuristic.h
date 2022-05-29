@@ -5,8 +5,14 @@
 class AIDebugHeuristic
 {
 public:
-	float m_lastScore;
-	std::string m_description;
+	AIDebugHeuristic(float lastScore,
+		std::string description)
+		: lastScore(lastScore),
+		description(description)
+	{
+	}
+	std::string description;
+	float lastScore;
 };
 
 class AIHeuristic

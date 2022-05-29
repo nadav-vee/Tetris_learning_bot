@@ -118,7 +118,6 @@ void Stack::Draw(sf::RenderWindow& window)
 		}
 	}
 	curpiece->DrawT(window);
-	curpieceBuffer->DrawT(window);
 	Qpieces.front()->MoveX(11);
 	Qpieces.front()->DrawT(window);
 	Qpieces.front()->MoveX(-11);
@@ -130,18 +129,6 @@ void Stack::Draw(sf::RenderWindow& window)
 	if (isHolding)
 	{
 		held->DrawT(window);
-
-		heldBuffer->MoveX(11);
-		heldBuffer->MoveTdown();
-		heldBuffer->MoveTdown();
-		heldBuffer->MoveTdown();
-
-		heldBuffer->DrawT(window);
-
-		heldBuffer->MoveX(-11);
-		heldBuffer->MoveTup();
-		heldBuffer->MoveTup();
-		heldBuffer->MoveTup();
 
 	}
 }
@@ -193,9 +180,9 @@ int Stack::CopyPeiceToStack()
 		if (x < 10 && x >= 0 && y >= 0 && y < 20)
 		{
 			board[y][x]->val = true;
-			board[y][x]->SetTex(curpiece->tetromino[i]->colorFileName);
 			board[y][x]->x = x;
 			board[y][x]->y = y;
+			board[y][x]->SetTex(curpiece->tetromino[i]->colorFileName);
 		}
 	}
 
@@ -642,12 +629,12 @@ void Stack::Drop(bool* restart)
 		CheckScore(CopyPeiceToStack());
 		return;
 	}
-	curpiece->MoveTdown();
-	curpieceBuffer->MoveTdown();
+	curpiece->MoveY(1);
+	curpieceBuffer->MoveY(1);
 	if (BlocksColl())
 	{
-		curpiece->MoveTup();
-		curpieceBuffer->MoveTup();
+		curpiece->MoveY(-1);
+		curpieceBuffer->MoveY(-1);
 		CheckScore(CopyPeiceToStack());
 		return;
 	}
@@ -675,67 +662,76 @@ Stack* Stack::CloneStack()
 	}
 	if (held)
 	{
-		toret->held = new Piece(ColorsType::BLUE);
+		toret->held = new Piece(ColorsType::GREY);
 	}
 	if (heldBuffer)
 	{
-		toret->heldBuffer = new Piece(ColorsType::BLUE);
+		toret->heldBuffer = new Piece(ColorsType::GREY);
 	}
-	toret->Qpieces.empty();
+	for (int i = 0; i < Qpieces.size(); i++)
+	{
+		Piece* toDel = toret->Qpieces.front();
+		toret->Qpieces.pop();
+		delete toDel;
+	}
 	Piece* tmpPiece;
 	for (int i = 0; i < Qpieces.size(); i++)
 	{
-		tmpPiece = new Piece(ColorsType::BLUE);
+		tmpPiece = new Piece(ColorsType::GREY);
 		Qpieces.push(Qpieces.front());
 		for (int j = 0; j < PIECESIZE; j++)
 		{
-			tmpPiece->tetromino[j]->SetTex(Qpieces.front()->tetromino[j]->colorFileName);
 			tmpPiece->tetromino[j]->val = Qpieces.front()->tetromino[j]->val;
 			tmpPiece->tetromino[j]->x = Qpieces.front()->tetromino[j]->x;
 			tmpPiece->tetromino[j]->y = Qpieces.front()->tetromino[j]->y;
+			tmpPiece->tetromino[j]->SetTex(Qpieces.front()->tetromino[j]->colorFileName);
 		}
+
 		tmpPiece->maxRotations = Qpieces.front()->maxRotations;
+		tmpPiece->pivot = Qpieces.front()->pivot;
+		tmpPiece->setColorPiece(Qpieces.front()->getColorPiece());
+
 		toret->Qpieces.push(tmpPiece);
 		Qpieces.pop();
 	}
+
 	for (int j = 0; j < PIECESIZE; j++)
 	{
-		toret->curpiece->tetromino[j]->SetTex(curpiece->tetromino[j]->colorFileName);
 		toret->curpiece->tetromino[j]->val = curpiece->tetromino[j]->val;
 		toret->curpiece->tetromino[j]->x = curpiece->tetromino[j]->x;
 		toret->curpiece->tetromino[j]->y = curpiece->tetromino[j]->y;
-		toret->curpiece->maxRotations = curpiece->maxRotations;
+		toret->curpiece->tetromino[j]->SetTex(curpiece->tetromino[j]->colorFileName);
 
-		if (held)
+		if (toret->held)
 		{
-			toret->held->tetromino[j]->SetTex(held->tetromino[j]->colorFileName);
 			toret->held->tetromino[j]->val = held->tetromino[j]->val;
 			toret->held->tetromino[j]->x = held->tetromino[j]->x;
 			toret->held->tetromino[j]->y = held->tetromino[j]->y;
+			toret->held->tetromino[j]->SetTex(held->tetromino[j]->colorFileName);
 			toret->held->maxRotations = held->maxRotations;
+			toret->held->pivot = held->pivot;
+			toret->held->setColorPiece(held->getColorPiece());
 		}
 
-		if (heldBuffer)
+		if (toret->heldBuffer)
 		{
-			toret->heldBuffer->tetromino[j]->SetTex(heldBuffer->tetromino[j]->colorFileName);
 			toret->heldBuffer->tetromino[j]->val = heldBuffer->tetromino[j]->val;
 			toret->heldBuffer->tetromino[j]->x = heldBuffer->tetromino[j]->x;
 			toret->heldBuffer->tetromino[j]->y = heldBuffer->tetromino[j]->y;
+			toret->heldBuffer->tetromino[j]->SetTex(heldBuffer->tetromino[j]->colorFileName);
 			toret->heldBuffer->maxRotations = heldBuffer->maxRotations;
+			toret->heldBuffer->pivot = heldBuffer->pivot;
+			toret->heldBuffer->setColorPiece(heldBuffer->getColorPiece());
 		}
-
-		toret->shadow->tetromino[j]->SetTex(shadow->tetromino[j]->colorFileName);
-		toret->shadow->tetromino[j]->val = shadow->tetromino[j]->val;
-		toret->shadow->tetromino[j]->x = shadow->tetromino[j]->x;
-		toret->shadow->tetromino[j]->y = shadow->tetromino[j]->y;
-		toret->shadow->maxRotations = shadow->maxRotations;
-
-		toret->curpieceBuffer->tetromino[j]->SetTex(curpieceBuffer->tetromino[j]->colorFileName);
-		toret->curpieceBuffer->tetromino[j]->val = curpieceBuffer->tetromino[j]->val;
-		toret->curpieceBuffer->tetromino[j]->x = curpieceBuffer->tetromino[j]->x;
-		toret->curpieceBuffer->tetromino[j]->y = curpieceBuffer->tetromino[j]->y;
-		toret->curpieceBuffer->maxRotations = curpieceBuffer->maxRotations;
 	}
+
+	toret->curpiece->maxRotations = curpiece->maxRotations;
+	toret->curpiece->pivot = curpiece->pivot;
+	toret->curpiece->setColorPiece(curpiece->getColorPiece());
+	toret->CopyPieceFunc(buff::PIECETOBUFF);
+	toret->CopyPieceFunc(buff::PIECETOSHADOW);
+
+
 	toret->Color = Color;
 	toret->Combo = Combo;
 	toret->didInsertToHold = didInsertToHold;
@@ -752,11 +748,15 @@ void Stack::ResetcurpiecePosition()
 	curpiece->ResetPos();
 }
 
-void Stack::ResetcurpiecePositionForRotation()
+sf::Vector2i Stack::ResetcurpiecePositionForRotation()
 {
+	sf::Vector2i lastpos;
+	lastpos.x = curpiece->Xpos;
+	lastpos.y = curpiece->Ypos;
 	curpiece->Xpos = 4;
 	curpiece->Ypos = 1;
 	curpiece->ResetPos();
+	return lastpos;
 }
 
 int Stack::GetMaximumSetXPos()
@@ -769,7 +769,7 @@ int Stack::GetMaximumSetXPos()
 		if (x > max) max = x;
 		if (x <= min) min = x;
 	}
-	maxXPos -= (max - min + 1);
+	maxXPos -= (max - min);
 	return maxXPos;
 }
 
@@ -783,7 +783,7 @@ void Stack::AISwitchPiece()
 	Color = curpiece->getColorPiece();
 	curpieceBuffer = new Piece(Color);
 	shadow = new Piece(Color);
-	ResetcurpiecePosition();
+	curpiece->SetStartingPos();
 	CopyPieceFunc(buff::PIECETOBUFF);
 	Qpieces.pop();
 	didInsertToHold = false;
@@ -817,60 +817,65 @@ void Stack::CopyPieceFunc(enum buff buf)
 	case BUFFTOPIECE:
 		curpiece->setColorPiece(curpieceBuffer->getColorPiece());
 		curpiece->pivot = curpieceBuffer->pivot;
+		curpiece->maxRotations = curpieceBuffer->maxRotations;
 		for (int i = 0; i < PIECESIZE; i++)
 		{
-			curpiece->tetromino[i]->SetTex(curpieceBuffer->tetromino[i]->colorFileName);
 			curpiece->tetromino[i]->val = curpieceBuffer->tetromino[i]->val;
 			curpiece->tetromino[i]->x = curpieceBuffer->tetromino[i]->x;
 			curpiece->tetromino[i]->y = curpieceBuffer->tetromino[i]->y;
+			curpiece->tetromino[i]->SetTex(curpieceBuffer->tetromino[i]->colorFileName);
 		}
 		curpiece->UpdatePos();
 		break;
 	case PIECETOBUFF:
 		curpieceBuffer->setColorPiece(Color);
 		curpieceBuffer->pivot = curpiece->pivot;
+		curpieceBuffer->maxRotations = curpiece->maxRotations;
 		for (int i = 0; i < PIECESIZE; i++)
 		{
-			curpieceBuffer->tetromino[i]->SetTex(curpiece->tetromino[i]->colorFileName);
 			curpieceBuffer->tetromino[i]->val = curpiece->tetromino[i]->val;
 			curpieceBuffer->tetromino[i]->x = curpiece->tetromino[i]->x;
 			curpieceBuffer->tetromino[i]->y = curpiece->tetromino[i]->y;
+			curpieceBuffer->tetromino[i]->SetTex(curpiece->tetromino[i]->colorFileName);
 		}
 		curpieceBuffer->UpdatePos();
 		break;
 	case PIECETOHELD:
 		held->setColorPiece(Color);
 		held->pivot = curpiece->pivot;
+		held->maxRotations = curpiece->maxRotations;
 		for (int i = 0; i < PIECESIZE; i++)
 		{
-			held->tetromino[i]->SetTex(curpiece->tetromino[i]->colorFileName);
 			held->tetromino[i]->val = curpiece->tetromino[i]->val;
 			held->tetromino[i]->x = curpiece->tetromino[i]->x;
 			held->tetromino[i]->y = curpiece->tetromino[i]->y;
+			held->tetromino[i]->SetTex(curpiece->tetromino[i]->colorFileName);
 		}
 		held->UpdatePos();
 		break;
 	case HELDTOHBUFF:
 		heldBuffer->setColorPiece(held->getColorPiece());
 		heldBuffer->pivot = held->pivot;
+		heldBuffer->maxRotations = held->maxRotations;
 		for (int i = 0; i < PIECESIZE; i++)
 		{
-			heldBuffer->tetromino[i]->SetTex(held->tetromino[i]->colorFileName);
 			heldBuffer->tetromino[i]->val = held->tetromino[i]->val;
 			heldBuffer->tetromino[i]->x = held->tetromino[i]->x;
 			heldBuffer->tetromino[i]->y = held->tetromino[i]->y;
+			heldBuffer->tetromino[i]->SetTex(held->tetromino[i]->colorFileName);
 		}
 		heldBuffer->UpdatePos();
 		break;
 	case HBUFFTOPIECE:
 		curpiece->setColorPiece(heldBuffer->getColorPiece());
 		curpiece->pivot = heldBuffer->pivot;
+		curpiece->maxRotations = heldBuffer->maxRotations;
 		for (int i = 0; i < PIECESIZE; i++)
 		{
-			curpiece->tetromino[i]->SetTex(heldBuffer->tetromino[i]->colorFileName);
 			curpiece->tetromino[i]->val = heldBuffer->tetromino[i]->val;
 			curpiece->tetromino[i]->x = heldBuffer->tetromino[i]->x;
 			curpiece->tetromino[i]->y = heldBuffer->tetromino[i]->y;
+			curpiece->tetromino[i]->SetTex(heldBuffer->tetromino[i]->colorFileName);
 		}
 		curpiece->UpdatePos();
 		break;
@@ -905,10 +910,10 @@ void Stack::CopyPieceFunc(enum buff buf)
 		}
 		for (int i = 0; i < PIECESIZE; i++)
 		{
-			shadow->tetromino[i]->SetTex(shadowtex);
 			shadow->tetromino[i]->val = curpiece->tetromino[i]->val;
 			shadow->tetromino[i]->x = curpiece->tetromino[i]->x;
 			shadow->tetromino[i]->y = curpiece->tetromino[i]->y;
+			shadow->tetromino[i]->SetTex(shadowtex);
 		}
 		shadow->pivot = curpiece->pivot;
 		break;

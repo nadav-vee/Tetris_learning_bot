@@ -2,10 +2,8 @@
 
 #define DEFAULT_SCORE -99999
 #define AI_CONTROLLER_UPDATE_FREQUENCY (.00f)
-
 #define NUM_LOOKAHEAD (2)
 #define AI_UPDATE_RATE_SECONDS (0.0f)
-
 
 class DesiredMoveSet
 {

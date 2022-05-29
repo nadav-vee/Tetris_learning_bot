@@ -3,16 +3,28 @@
 AI::AI()
 	: timeUntilUpdate(AI_CONTROLLER_UPDATE_FREQUENCY)
 	, updateFrequency(AI_CONTROLLER_UPDATE_FREQUENCY)
-	, m_aiSpawnPos(0, 0)
+	, toggleDebug(false)
 {
-
+	initialized = false;
 	tetris = new Stack();
-	currentMove.used = true; // controller comp
+	currentMove.used = true;
+	timeSinceLastUpdate = 0.0f;
+}
 
-	m_aiSpawnPos.x = BW; // spawn comp
-	m_aiSpawnPos.y = 0;
-
-	timeSinceLastUpdate = 0.0f + rand() / (float)RAND_MAX; // eval comp
+AI::~AI()
+{
+	for (auto i : heuristics)
+	{
+		free(i);
+	}
+	heuristics.clear();
+	for (auto i : debugHeuristics)
+	{
+		free(i);
+	}
+	debugHeuristics.clear();
+	//free(bestMoves);
+	delete tetris;
 }
 
 void AI::FindBestMove()
@@ -23,7 +35,11 @@ void AI::FindBestMove()
 
 		// Stop AI when game is lost
 		bestMoves[0] = __FindBestMove(tetris, NUM_LOOKAHEAD, false);
-		DesiredMoveSet heldMove = __FindBestMove(tetris, NUM_LOOKAHEAD, true);
+		DesiredMoveSet heldMove;
+		if (!tetris->didInsertToHold)
+		{
+			heldMove = __FindBestMove(tetris, NUM_LOOKAHEAD, true);
+		}
 
 		if (heldMove.score > bestMoves[0].score)
 		{
@@ -42,6 +58,20 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 	{
 		return result;
 	}
+
+	if (numLookaheads == 1 && toggleDebug)
+	{
+		if (holdPiece)
+		{
+			if (tetrisBoard->held)
+				std::cout << tetrisBoard->held->tetromino[0]->colorFileName << std::endl;
+		}
+		else
+		{
+			std::cout << tetrisBoard->curpiece->tetromino[0]->colorFileName << std::endl;
+		}
+	}
+
 
 	int colMax = STACKW;
 	bool xmaxset = false;
@@ -80,7 +110,6 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 				xmaxset = true;
 			}
 			int colIdx = boardCopy->curpiece->Xpos;
-			bool* Res = new bool();
 			boardCopy->Drop(Res);
 			if (*Res)
 				boardCopy->resetCount++;
@@ -88,17 +117,35 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 			// Try the current piece in a specific position
 			// Try the next piece in a specific position	
 
+			if (numLookaheads == 1 && toggleDebug)
+			{
+				printf("%d %d:\n", j, i);
+			}
 			// Try the next lookahead
 			float currentScore = 0.0f;
+			int index = 0;
 			for (auto h : heuristics)
 			{
+				
 				// Score the grid	
 				float score = h->GetScore(tetrisBoard, boardCopy);
+
+				if (numLookaheads == 1 && toggleDebug)
+				{
+					debugHeuristics.at(index)->lastScore = score;
+					std::cout << debugHeuristics.at(index)->description;
+					std::cout << debugHeuristics.at(index++)->lastScore << " ";
+				}
+
 				currentScore += score;
+			}
+			if (numLookaheads == 1 && toggleDebug)
+			{
+				printf("\n");
 			}
 
 			DesiredMoveSet lookaheadMove;
-			if (numLookaheads > 0)
+			if (numLookaheads > (toggleDebug) ? 1 : 0)
 			{
 				lookaheadMove = __FindBestMove(boardCopy, numLookaheads, false);
 				currentScore += lookaheadMove.score;
@@ -111,25 +158,30 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 				result.col = colIdx;
 				result.used = false;
 
-				/*int index = 0;*/
-
-				//for (auto h : heuristics)
-				//{
-				//	if (numLookaheads == NUM_LOOKAHEAD - 1)
-				//	{
-				//		float score = h->GetScore(tetrisBoard, boardCopy);
-				//		// debugHeuristics[index].m_lastScore = score;
-				//	}
-				//	index++;
-				//}
-
-				if (numLookaheads > 0)
+				if (numLookaheads > (toggleDebug) ? 1 : 0)
 				{
 					bestMoves[NUM_LOOKAHEAD - numLookaheads] = lookaheadMove;
 				}
 			}
+
+			if (numLookaheads == 1 && toggleDebug)
+			{
+				std::cout << "\n - result.score : " << result.score << "\n";
+				std::cout << " - result.numRotations : " << result.numRotations << "\n";
+				std::cout << " - result.col : " << result.col << "\n";
+				std::cout << " - result.swapPiece : " << result.swapPiece << "\n";
+				std::cout << " - result.used : " << result.used << "\n";
+			}
 			delete boardCopy;
 		}
+		if (numLookaheads == 1 && toggleDebug)
+		{
+			printf("diff rot\n\n");
+		}
+	}
+	if (numLookaheads == 1 && toggleDebug)
+	{
+		printf("diff piece\n\n");
 	}
 	return result;
 }
@@ -141,12 +193,7 @@ void AI::SetUpdateFrequency(float time)
 
 void AI::SetCurrentMove(DesiredMoveSet& move)
 {
-
 	currentMove = move;
-
-	//if (move.id != m_currentMove.id)
-	//{
-	//}
 }
 
 bool AI::NeedsNewMove()

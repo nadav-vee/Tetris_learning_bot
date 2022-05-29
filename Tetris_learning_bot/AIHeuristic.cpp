@@ -58,6 +58,10 @@ float AIHeuristic_Bumpiness::GetScore(Stack* tetrisBoard, Stack* BoardCopy)
 				height = STACKH - j;
 				break;
 			}
+			else if(j == (STACKH - 1))
+			{
+				height = 0;
+			}
 		}
 
 		if (i > 0)
@@ -71,38 +75,6 @@ float AIHeuristic_Bumpiness::GetScore(Stack* tetrisBoard, Stack* BoardCopy)
 
 	return m_scalar * result;
 }
-
-//float AIHeuristic_HighestCol::GetScore(Stack* tetrisBoard)
-//{
-//	float result = 0.0f;
-//	int highest = 0;
-//	for (int i = 0; i < tetrisBoard->m_cols; i++)
-//	{
-//		for (int j = 0; j < tetrisBoard->m_rows; j++)
-//		{
-//			if (tetrisBoard->m_grid.m_cells[i][j].m_isFilled)
-//			{
-//				int height = tetrisBoard->m_rows - j;
-//				if (highest < height)
-//				{
-//					highest = height;
-//					if (height + 6 > tetrisBoard->m_rows)
-//					{
-//						result = (float)height + 6;
-//					}
-//					else
-//					{
-//						result = (float)height;
-//					}
-//				}
-//
-//				break;
-//			}
-//		}
-//	}
-//
-//	return m_scalar * result;
-//}
 
 float AIHeuristic_GameLoss::GetScore(Stack* tetrisBoard, Stack* BoardCopy)
 {

@@ -96,7 +96,7 @@ public:
 	void NewPieceAndDrop(bool* restart);
 	Stack* CloneStack();
 	void ResetcurpiecePosition();
-	void ResetcurpiecePositionForRotation();
+	sf::Vector2i ResetcurpiecePositionForRotation();
 	int GetMaximumSetXPos();
 	void AISwitchPiece();
 	int resetCount;

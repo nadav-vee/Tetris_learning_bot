@@ -11,6 +11,7 @@ void AIGame::Start(sf::RenderWindow& window)
 	// systems
 	//sf::View playerView;
 	ai = new AI();
+	ai->toggleDebug = toggleDebug;
 
 	bool* restart = new bool();
 	sf::Text highscoreTX;
@@ -32,7 +33,7 @@ void AIGame::Start(sf::RenderWindow& window)
 	Score.setCharacterSize(25);
 	//
 	LosingMessage.setFont(*font);
-	LosingMessage.setString("YOU LOST!");
+	LosingMessage.setString("AI LOST!");
 	LosingMessage.setFillColor(sf::Color::Green);
 	LosingMessage.setCharacterSize(30);
 	sf::Vector2f LosingMessageBounds = { LosingMessage.getGlobalBounds().width, LosingMessage.getGlobalBounds().height };
@@ -68,7 +69,21 @@ void AIGame::Start(sf::RenderWindow& window)
 			if (event.type == sf::Event::KeyPressed &&
 				event.key.code == sf::Keyboard::Escape)
 			{
+				delete ai;
 				return;
+			}
+			if (event.type == sf::Event::KeyPressed &&
+				event.key.code == sf::Keyboard::D)
+			{
+				if (toggleDebug)
+				{
+					toggleDebug = false;
+				}
+				else
+				{
+					toggleDebug = true;
+				}
+				ai->toggleDebug = toggleDebug;
 			}
 		}
 
@@ -77,7 +92,7 @@ void AIGame::Start(sf::RenderWindow& window)
 		sf::Time time = clock.restart();
 		if (!paused)
 		{
-			Update(time.asSeconds());
+			Update(time.asSeconds(), restart);
 			string sco = "Score = ";
 			sco += std::to_string(ai->tetris->Score);
 			Score.setString(sco);
@@ -110,7 +125,7 @@ void AIGame::Start(sf::RenderWindow& window)
 			// general game variables
 			*restart = false;
 
-			sf::RenderWindow windowyoulost(sf::VideoMode(W / 2, H / 2), "welp you dieded");
+			sf::RenderWindow windowyoulost(sf::VideoMode(W / 2, H / 2), "Algorithm stopped");
 			while (windowyoulost.isOpen())
 			{
 				sf::Event eventt;
@@ -121,6 +136,7 @@ void AIGame::Start(sf::RenderWindow& window)
 					if (eventt.type == sf::Event::KeyPressed
 						&& eventt.key.code == sf::Keyboard::Space)
 					{
+						return;
 					}
 				}
 
@@ -135,7 +151,7 @@ void AIGame::Start(sf::RenderWindow& window)
 	}
 }
 
-void AIGame::Update(float dt)
+void AIGame::Update(float dt, bool* res)
 {
 
 	ai->SetUpdateFrequency(0.5);
@@ -143,10 +159,19 @@ void AIGame::Update(float dt)
 	if (ai)
 	{
 		ai->timeUntilUpdate -= dt;
-
+		bool oncedebugInfo = true;
 		while (ai->timeUntilUpdate <= 0.0f)
 		{
 			ai->timeUntilUpdate += ai->updateFrequency;
+			if (oncedebugInfo && toggleDebug)
+			{
+				std::cout << "\n - ai->currentMove.score : " << ai->currentMove.score << "\n";
+				std::cout << " - ai->currentMove.numRotations : " << ai->currentMove.numRotations << "\n";
+				std::cout << " - ai->currentMove.col : " << ai->currentMove.col << "\n";
+				std::cout << " - ai->currentMove.swapPiece : " << ai->currentMove.swapPiece << "\n";
+				std::cout << " - ai->currentMove.used : " << ai->currentMove.used << "\n";
+				oncedebugInfo = false;
+			}
 			if (!ai->currentMove.used)
 			{
 				if (ai->currentMove.swapPiece && !ai->tetris->didInsertToHold)
@@ -161,9 +186,9 @@ void AIGame::Update(float dt)
 					if (0 < ai->currentMove.numRotations)
 					{
 						shouldDrop = false;
-						ai->tetris->ResetcurpiecePositionForRotation();
+						sf::Vector2i lastpos = ai->tetris->ResetcurpiecePositionForRotation();
 						ai->tetris->RotateR();
-						ai->tetris->ResetcurpiecePosition();
+						ai->tetris->curpiece->SetPosition(lastpos.x, lastpos.y);
 						ai->currentMove.numRotations--;
 					}
 					else if (ai->tetris->curpiece->Xpos < ai->currentMove.col)
@@ -180,9 +205,8 @@ void AIGame::Update(float dt)
 					if (shouldDrop)
 					{
 						ai->currentMove.used = true;
-						bool* Res = new bool();
-						ai->tetris->NewPieceAndDrop(Res);
-						if (*Res)
+						ai->tetris->NewPieceAndDrop(res);
+						if (*res)
 							ai->tetris->resetCount++;
 					}
 				}
@@ -203,6 +227,12 @@ void AIGame::Update(float dt)
 			ai->heuristics.push_back(new AIHeuristic_Holes(-5.5f));
 			ai->heuristics.push_back(new AIHeuristic_Blockade(-0.4f));
 			ai->heuristics.push_back(new AIHeuristic_Bumpiness(-1.55f));
+			ai->heuristics.push_back(new AIHeuristic_GameLoss(1));
+			ai->debugHeuristics.push_back(new AIDebugHeuristic(0, "AG: "));
+			ai->debugHeuristics.push_back(new AIDebugHeuristic(0, "H: "));
+			ai->debugHeuristics.push_back(new AIDebugHeuristic(0, "Bl: "));
+			ai->debugHeuristics.push_back(new AIDebugHeuristic(0, "Bmp: "));
+			ai->debugHeuristics.push_back(new AIDebugHeuristic(0, "GL: "));
 		}
 
 		ai->timeSinceLastUpdate += dt;

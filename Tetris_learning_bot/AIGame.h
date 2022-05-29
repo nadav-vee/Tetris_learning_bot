@@ -6,7 +6,7 @@ class AIGame
 public:
 	AIGame();
 	void Start(sf::RenderWindow& window);
-	void Update(float dt);
+	void Update(float dt, bool* res);
 	void Draw(sf::RenderWindow& window, float dt);
 	
 private:
@@ -17,5 +17,6 @@ private:
 	sf::Text LosingMessage;
 	sf::Font* font = new sf::Font();
 	int HighScore = 0;
+	bool toggleDebug = false;
 };
 
