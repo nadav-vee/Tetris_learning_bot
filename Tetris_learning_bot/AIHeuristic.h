@@ -2,19 +2,6 @@
 #include "const.h"
 #include "Stack.h"
 
-class AIDebugHeuristic
-{
-public:
-	AIDebugHeuristic(float lastScore,
-		std::string description)
-		: lastScore(lastScore),
-		description(description)
-	{
-	}
-	std::string description;
-	float lastScore;
-};
-
 class AIHeuristic
 {
 public:

@@ -21,14 +21,12 @@ public:
 	bool* Res = new bool();
 	sf::Vector2f aiHeuristicRange;
 	std::vector<AIHeuristic*> heuristics;
-	std::vector<AIDebugHeuristic*> debugHeuristics;
 	DesiredMoveSet bestMoves[NUM_LOOKAHEAD];
 	DesiredMoveSet currentMove;
 	Stack* tetris;
 	float timeSinceLastUpdate;
 	float timeUntilUpdate;
 	float updateFrequency;
-	bool toggleDebug;
 };
 
 

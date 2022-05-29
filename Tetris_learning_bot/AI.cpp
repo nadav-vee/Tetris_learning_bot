@@ -3,7 +3,6 @@
 AI::AI()
 	: timeUntilUpdate(AI_CONTROLLER_UPDATE_FREQUENCY)
 	, updateFrequency(AI_CONTROLLER_UPDATE_FREQUENCY)
-	, toggleDebug(false)
 {
 	initialized = false;
 	tetris = new Stack();
@@ -18,11 +17,6 @@ AI::~AI()
 		free(i);
 	}
 	heuristics.clear();
-	for (auto i : debugHeuristics)
-	{
-		free(i);
-	}
-	debugHeuristics.clear();
 	//free(bestMoves);
 	delete tetris;
 }
@@ -57,19 +51,6 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 	if (!tetris->curpiece)
 	{
 		return result;
-	}
-
-	if (numLookaheads == 1 && toggleDebug)
-	{
-		if (holdPiece)
-		{
-			if (tetrisBoard->held)
-				std::cout << tetrisBoard->held->tetromino[0]->colorFileName << std::endl;
-		}
-		else
-		{
-			std::cout << tetrisBoard->curpiece->tetromino[0]->colorFileName << std::endl;
-		}
 	}
 
 
@@ -117,10 +98,6 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 			// Try the current piece in a specific position
 			// Try the next piece in a specific position	
 
-			if (numLookaheads == 1 && toggleDebug)
-			{
-				printf("%d %d:\n", j, i);
-			}
 			// Try the next lookahead
 			float currentScore = 0.0f;
 			int index = 0;
@@ -130,22 +107,11 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 				// Score the grid	
 				float score = h->GetScore(tetrisBoard, boardCopy);
 
-				if (numLookaheads == 1 && toggleDebug)
-				{
-					debugHeuristics.at(index)->lastScore = score;
-					std::cout << debugHeuristics.at(index)->description;
-					std::cout << debugHeuristics.at(index++)->lastScore << " ";
-				}
-
 				currentScore += score;
-			}
-			if (numLookaheads == 1 && toggleDebug)
-			{
-				printf("\n");
 			}
 
 			DesiredMoveSet lookaheadMove;
-			if (numLookaheads > (toggleDebug) ? 1 : 0)
+			if (numLookaheads > 0)
 			{
 				lookaheadMove = __FindBestMove(boardCopy, numLookaheads, false);
 				currentScore += lookaheadMove.score;
@@ -158,30 +124,13 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 				result.col = colIdx;
 				result.used = false;
 
-				if (numLookaheads > (toggleDebug) ? 1 : 0)
+				if (numLookaheads > 0)
 				{
 					bestMoves[NUM_LOOKAHEAD - numLookaheads] = lookaheadMove;
 				}
 			}
-
-			if (numLookaheads == 1 && toggleDebug)
-			{
-				std::cout << "\n - result.score : " << result.score << "\n";
-				std::cout << " - result.numRotations : " << result.numRotations << "\n";
-				std::cout << " - result.col : " << result.col << "\n";
-				std::cout << " - result.swapPiece : " << result.swapPiece << "\n";
-				std::cout << " - result.used : " << result.used << "\n";
-			}
 			delete boardCopy;
 		}
-		if (numLookaheads == 1 && toggleDebug)
-		{
-			printf("diff rot\n\n");
-		}
-	}
-	if (numLookaheads == 1 && toggleDebug)
-	{
-		printf("diff piece\n\n");
 	}
 	return result;
 }

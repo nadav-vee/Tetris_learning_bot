@@ -17,6 +17,5 @@ private:
 	sf::Text LosingMessage;
 	sf::Font* font = new sf::Font();
 	int HighScore = 0;
-	bool toggleDebug = false;
 };
 

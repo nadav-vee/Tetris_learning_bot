@@ -11,7 +11,6 @@ void AIGame::Start(sf::RenderWindow& window)
 	// systems
 	//sf::View playerView;
 	ai = new AI();
-	ai->toggleDebug = toggleDebug;
 
 	bool* restart = new bool();
 	sf::Text highscoreTX;
@@ -71,19 +70,6 @@ void AIGame::Start(sf::RenderWindow& window)
 			{
 				delete ai;
 				return;
-			}
-			if (event.type == sf::Event::KeyPressed &&
-				event.key.code == sf::Keyboard::D)
-			{
-				if (toggleDebug)
-				{
-					toggleDebug = false;
-				}
-				else
-				{
-					toggleDebug = true;
-				}
-				ai->toggleDebug = toggleDebug;
 			}
 		}
 
@@ -159,19 +145,9 @@ void AIGame::Update(float dt, bool* res)
 	if (ai)
 	{
 		ai->timeUntilUpdate -= dt;
-		bool oncedebugInfo = true;
 		while (ai->timeUntilUpdate <= 0.0f)
 		{
 			ai->timeUntilUpdate += ai->updateFrequency;
-			if (oncedebugInfo && toggleDebug)
-			{
-				std::cout << "\n - ai->currentMove.score : " << ai->currentMove.score << "\n";
-				std::cout << " - ai->currentMove.numRotations : " << ai->currentMove.numRotations << "\n";
-				std::cout << " - ai->currentMove.col : " << ai->currentMove.col << "\n";
-				std::cout << " - ai->currentMove.swapPiece : " << ai->currentMove.swapPiece << "\n";
-				std::cout << " - ai->currentMove.used : " << ai->currentMove.used << "\n";
-				oncedebugInfo = false;
-			}
 			if (!ai->currentMove.used)
 			{
 				if (ai->currentMove.swapPiece && !ai->tetris->didInsertToHold)
@@ -228,11 +204,6 @@ void AIGame::Update(float dt, bool* res)
 			ai->heuristics.push_back(new AIHeuristic_Blockade(-0.4f));
 			ai->heuristics.push_back(new AIHeuristic_Bumpiness(-1.55f));
 			ai->heuristics.push_back(new AIHeuristic_GameLoss(1));
-			ai->debugHeuristics.push_back(new AIDebugHeuristic(0, "AG: "));
-			ai->debugHeuristics.push_back(new AIDebugHeuristic(0, "H: "));
-			ai->debugHeuristics.push_back(new AIDebugHeuristic(0, "Bl: "));
-			ai->debugHeuristics.push_back(new AIDebugHeuristic(0, "Bmp: "));
-			ai->debugHeuristics.push_back(new AIDebugHeuristic(0, "GL: "));
 		}
 
 		ai->timeSinceLastUpdate += dt;
