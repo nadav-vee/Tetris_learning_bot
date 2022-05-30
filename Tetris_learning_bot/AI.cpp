@@ -1,5 +1,8 @@
 #include "AI.h"
 
+/// <summary>
+///									Constructor for the AI type
+/// </summary>
 AI::AI()
 	: timeUntilUpdate(AI_CONTROLLER_UPDATE_FREQUENCY)
 	, updateFrequency(AI_CONTROLLER_UPDATE_FREQUENCY)
@@ -10,6 +13,9 @@ AI::AI()
 	timeSinceLastUpdate = 0.0f;
 }
 
+/// <summary>
+///									Destructor for the AI type
+/// </summary>
 AI::~AI()
 {
 	for (auto i : heuristics)
@@ -21,6 +27,9 @@ AI::~AI()
 	delete tetris;
 }
 
+/// <summary>
+///									Function chooses the right move, and wraps the algorithm
+/// </summary>
 void AI::FindBestMove()
 {
 	if (tetris)
@@ -42,6 +51,14 @@ void AI::FindBestMove()
 	}
 }
 
+/// <summary>
+///									the AL algorithm itself
+///									works in O(((STACKW*STACKH)^2)^NUM_LOOKAHEADS)
+/// </summary>
+/// <param name="tetrisBoard">		The copy of the code, replicated and scored in the code	</param>
+/// <param name="numLookaheads">	level of depth into the algorithm						</param>
+/// <param name="holdPiece">		indicates the whether it's a held piece					</param>
+/// <returns>						The desiredmove result									</returns>
 DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool holdPiece)
 {
 	DesiredMoveSet result;
@@ -91,25 +108,23 @@ DesiredMoveSet AI::__FindBestMove(Stack* tetrisBoard, int numLookaheads, bool ho
 				xmaxset = true;
 			}
 			int colIdx = boardCopy->curpiece->Xpos;
+			// Try the current piece in a specific position	
 			boardCopy->Drop(Res);
 			if (*Res)
 				boardCopy->resetCount++;
 
-			// Try the current piece in a specific position
-			// Try the next piece in a specific position	
 
-			// Try the next lookahead
 			float currentScore = 0.0f;
 			int index = 0;
 			for (auto h : heuristics)
 			{
-				
 				// Score the grid	
 				float score = h->GetScore(tetrisBoard, boardCopy);
 
 				currentScore += score;
 			}
 
+			// Try the next lookahead
 			DesiredMoveSet lookaheadMove;
 			if (numLookaheads > 0)
 			{

@@ -46,7 +46,15 @@ void AIGame::Start(sf::RenderWindow& window)
 	upperHoldLine->setFillColor(sf::Color::Green);
 
 
-
+	if (!ai->initialized)
+	{
+		ai->initialized = true;
+		ai->heuristics.push_back(new AIHeuristic_AggregateHeight(-2.00));
+		ai->heuristics.push_back(new AIHeuristic_Holes(-5.5f));
+		ai->heuristics.push_back(new AIHeuristic_Blockade(-0.4f));
+		ai->heuristics.push_back(new AIHeuristic_Bumpiness(-1.55f));
+		ai->heuristics.push_back(new AIHeuristic_GameLoss(1));
+	}
 
 
 	bool paused = false;
@@ -140,7 +148,7 @@ void AIGame::Start(sf::RenderWindow& window)
 void AIGame::Update(float dt, bool* res)
 {
 
-	ai->SetUpdateFrequency(0.05);
+	ai->SetUpdateFrequency(AI_UPDATE_FREQ);
 	// controller
 	if (ai)
 	{
@@ -191,20 +199,11 @@ void AIGame::Update(float dt, bool* res)
 				ai->tetris->SetShadow();
 			}
 		}
-	} // move
+	}
 
-	// eval
+	// Init
 	if (ai)
 	{
-		if (!ai->initialized)
-		{
-			ai->initialized = true;
-			ai->heuristics.push_back(new AIHeuristic_AggregateHeight(-2.00));
-			ai->heuristics.push_back(new AIHeuristic_Holes(-5.5f));
-			ai->heuristics.push_back(new AIHeuristic_Blockade(-0.4f));
-			ai->heuristics.push_back(new AIHeuristic_Bumpiness(-1.55f));
-			ai->heuristics.push_back(new AIHeuristic_GameLoss(1));
-		}
 
 		ai->timeSinceLastUpdate += dt;
 
@@ -218,15 +217,14 @@ void AIGame::Update(float dt, bool* res)
 		}
 	}
 }
-
+/// <summary>
+///		Draw function
+/// </summary>
+/// <param name="window">the window type</param>
+/// <param name="dt">delta time from last frame</param>
 void AIGame::Draw(sf::RenderWindow& window, float dt)
 {
-	// move
-
-	//// Debug
 	Stack* current = ai->tetris;
-	current->Draw(window);
-
-	// 
+	current->Draw(window); 
 }
 

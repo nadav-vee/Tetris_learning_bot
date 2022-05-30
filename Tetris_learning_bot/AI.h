@@ -10,13 +10,13 @@ public:
 	~AI();
 	void FindBestMove();
 	DesiredMoveSet __FindBestMove(Stack* tetrisBoard, int lookaheads, bool holdPiece);
-	
-	void SetUpdateFrequency(float time);
-	void SetCurrentMove(DesiredMoveSet& move);
-	bool NeedsNewMove();
 
-	bool CanFindMove() { return timeSinceLastUpdate > AI_UPDATE_RATE_SECONDS; }
-	DesiredMoveSet GetBestMove();
+	void SetUpdateFrequency(float time); // sets the update frequency
+	void SetCurrentMove(DesiredMoveSet& move); // sets the move
+	bool NeedsNewMove(); // checks whether the ai needs a new move
+
+	bool CanFindMove() { return timeSinceLastUpdate > AI_UPDATE_RATE_SECONDS; } // checks the current abilty to find the move
+	DesiredMoveSet GetBestMove(); // getter for the bestmove array
 	bool initialized;
 	bool* Res = new bool();
 	sf::Vector2f aiHeuristicRange;
